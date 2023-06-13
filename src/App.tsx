@@ -14,7 +14,7 @@ const App = () => {
 
   return (
     <div className={styles.App}>
-      <h1>React + TypeScript + Vite + Redux Toolkit + Sass</h1>
+      <h1>React + TypeScript + Vite + Redux Toolkit + Sass + Firebase + React Router</h1>
       <h2>Count: {countValue}</h2>
       <button onClick={handleIncrementCount}>Increment</button>
     </div>
