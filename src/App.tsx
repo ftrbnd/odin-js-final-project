@@ -7,9 +7,9 @@ const App = () => {
   const dispatch = useDispatch();
 
   const countValue = useSelector((state: RootState) => state.count.value);
-  
+
   const handleIncrementCount = () => {
-    dispatch(incrementCount({ value: 1 }))
+    dispatch(incrementCount({ value: 1 }));
   };
 
   return (
