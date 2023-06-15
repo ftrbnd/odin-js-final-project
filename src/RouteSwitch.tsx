@@ -1,14 +1,14 @@
 import { FC } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import App from './App';
-import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Game from './pages/Game';
 
 const RouteSwitch: FC = () => {
   return (
     <BrowserRouter>
-      <Navbar />
       <Routes>
-        <Route path="/" element={<App />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/play" element={<Game />} />
       </Routes>
     </BrowserRouter>
   );
