@@ -1,18 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux';
-import styles from '../styles/Home.module.scss';
-import { RootState } from '../app/store';
-import { incrementCount } from '../features/countSlice';
-import { Button, Container, Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
-  const dispatch = useDispatch();
-
-  const countValue = useSelector((state: RootState) => state.count.value);
-
-  const handleIncrementCount = () => {
-    dispatch(incrementCount({ value: 1 }));
-  };
+  // const dispatch = useDispatch();
 
   return (
     <Stack justifyContent="center" alignItems="center" height="100vh" spacing={3}>
