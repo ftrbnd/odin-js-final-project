@@ -11,6 +11,7 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import RulesModal from './RulesModal';
 import LinksDrawer from './LinksDrawer';
+import { Link } from 'react-router-dom';
 
 const Navbar: FC = () => {
   const theme = useTheme();
@@ -30,9 +31,11 @@ const Navbar: FC = () => {
           <IconButton aria-label="menu" edge="start" color="inherit" size="large" onClick={() => toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h1" sx={{ flexGrow: 1 }} noWrap fontSize="4rem">
-            EDEN Heardle
-          </Typography>
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Typography variant="h1" sx={{ flexGrow: 1 }} noWrap fontSize="4rem">
+              EDEN Heardle
+            </Typography>
+          </Link>
           <IconButton aria-label="theme" color="inherit" sx={{ ml: 1 }} onClick={colorMode.toggleColorMode}>
             {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
