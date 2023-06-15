@@ -1,4 +1,4 @@
-import { Box, Divider, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SwipeableDrawer } from '@mui/material';
+import { Box, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SwipeableDrawer } from '@mui/material';
 import { FC } from 'react';
 import RedditIcon from '@mui/icons-material/Reddit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
