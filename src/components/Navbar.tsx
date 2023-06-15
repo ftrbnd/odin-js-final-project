@@ -1,5 +1,5 @@
 import { AppBar, IconButton, Toolbar, Typography } from '@mui/material';
-import { FC, useContext } from 'react';
+import { FC, useContext, useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
@@ -9,10 +9,13 @@ import { useTheme } from '@mui/material/styles';
 import { ColorModeContext } from '../utils/ColorModeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import RulesModal from './RulesModal';
 
 const Navbar: FC = () => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
+
+  const [showRules, setShowRules] = useState(false);
 
   return (
     <AppBar position="sticky" sx={{ width: '100%', padding: '1rem' }}>
@@ -23,10 +26,10 @@ const Navbar: FC = () => {
         <Typography variant="h1" sx={{ flexGrow: 1 }} noWrap fontSize="4rem">
           EDEN Heardle
         </Typography>
-        <IconButton sx={{ ml: 1 }} onClick={colorMode.toggleColorMode} color="inherit">
+        <IconButton aria-label="theme" color="inherit" sx={{ ml: 1 }} onClick={colorMode.toggleColorMode}>
           {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
         </IconButton>
-        <IconButton aria-label="rules" color="inherit" size="large">
+        <IconButton aria-label="rules" color="inherit" size="large" onClick={() => setShowRules(true)}>
           <HelpOutlineIcon />
         </IconButton>
         <IconButton aria-label="stats" color="inherit" size="large">
@@ -38,6 +41,7 @@ const Navbar: FC = () => {
         <IconButton aria-label="settings" color="inherit" size="large">
           <SettingsIcon />
         </IconButton>
+        <RulesModal open={showRules} closeModal={() => setShowRules(false)} />
       </Toolbar>
     </AppBar>
   );
