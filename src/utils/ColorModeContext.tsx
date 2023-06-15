@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren, createContext, useMemo, useState } from 'react';
-import { ThemeProvider, createTheme } from '@mui/material';
+import { CssBaseline, PaletteMode, ThemeProvider, createTheme } from '@mui/material';
 
 interface IColorModeContext {
   toggleColorMode: () => void;
@@ -15,7 +15,7 @@ const ColorModeProvider: FC<PropsWithChildren> = ({ children }) => {
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+        setMode((prevMode: PaletteMode) => (prevMode === 'light' ? 'dark' : 'light'));
       },
       mode
     }),
@@ -34,7 +34,10 @@ const ColorModeProvider: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+      </ThemeProvider>
     </ColorModeContext.Provider>
   );
 };
