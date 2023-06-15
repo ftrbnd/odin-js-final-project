@@ -39,11 +39,11 @@ const RulesModal: FC<IProps> = ({ open, closeModal }) => {
             <Typography variant="h5">Examples</Typography>
             <List>TODO: Add visual examples</List>
             <Divider />
-            <Typography variant="subtitle1">
+            <Typography variant="body1">
               <Link to="/login">Log in or create an account</Link> to link your stats.
             </Typography>
             <Divider />
-            <Typography variant="subtitle1">A new puzzle is released daily at midnight. If you haven’t already, you can sign up for our daily reminder email.</Typography>
+            <Typography variant="body2">A new puzzle is released daily at midnight. If you haven’t already, you can sign up for our daily reminder email.</Typography>
           </DialogContentText>
         </DialogContent>
       </Dialog>
