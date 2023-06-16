@@ -36,22 +36,25 @@ const Navbar: FC = () => {
               EDEN Heardle
             </Typography>
           </Link>
-          <IconButton aria-label="theme" color="inherit" sx={{ ml: 1 }} onClick={colorMode.toggleColorMode}>
-            {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-          </IconButton>
-          <IconButton aria-label="rules" color="inherit" size="large" onClick={() => setShowRules(true)}>
-            <HelpOutlineIcon />
-          </IconButton>
-          <IconButton aria-label="stats" color="inherit" size="large">
-            <ShowChartOutlinedIcon />
-          </IconButton>
-          <IconButton aria-label="leaderboard" color="inherit" size="large">
-            <LeaderboardOutlinedIcon />
-          </IconButton>
-          <IconButton aria-label="settings" color="inherit" size="large">
-            <SettingsIcon />
-          </IconButton>
-          <RulesModal open={showRules} closeModal={() => setShowRules(false)} />
+          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ display: 'flex' }}>
+            <IconButton aria-label="stats" color="inherit" size="large">
+              <ShowChartOutlinedIcon />
+            </IconButton>
+            <IconButton aria-label="leaderboard" color="inherit" size="large">
+              <LeaderboardOutlinedIcon />
+            </IconButton>
+            <IconButton aria-label="rules" color="inherit" size="large" onClick={() => setShowRules(true)}>
+              <HelpOutlineIcon />
+            </IconButton>
+            <IconButton aria-label="theme" color="inherit" sx={{ ml: 1 }} onClick={colorMode.toggleColorMode}>
+              {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
+            <IconButton aria-label="settings" color="inherit" size="large">
+              <SettingsIcon />
+            </IconButton>
+            <RulesModal open={showRules} closeModal={() => setShowRules(false)} />
+          </Box>
         </Toolbar>
       </AppBar>
       <LinksDrawer open={showDrawer} toggleDrawer={toggleDrawer} />
