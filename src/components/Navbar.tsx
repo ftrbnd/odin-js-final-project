@@ -12,6 +12,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import RulesModal from './RulesModal';
 import LinksDrawer from './LinksDrawer';
 import { Link } from 'react-router-dom';
+import SettingsModal from './SettingsModal';
 
 const Navbar: FC = () => {
   const theme = useTheme();
@@ -19,6 +20,7 @@ const Navbar: FC = () => {
 
   const [showDrawer, setShowDrawer] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const toggleDrawer = (open: boolean) => {
     setShowDrawer(open);
@@ -50,10 +52,11 @@ const Navbar: FC = () => {
             <IconButton aria-label="theme" color="inherit" sx={{ ml: 1 }} onClick={colorMode.toggleColorMode}>
               {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
-            <IconButton aria-label="settings" color="inherit" size="large">
+            <IconButton aria-label="settings" color="inherit" size="large" onClick={() => setShowSettings(true)}>
               <SettingsIcon />
             </IconButton>
             <RulesModal open={showRules} closeModal={() => setShowRules(false)} />
+            <SettingsModal open={showSettings} closeModal={() => setShowSettings(false)} />
           </Box>
         </Toolbar>
       </AppBar>

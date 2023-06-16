@@ -26,12 +26,10 @@ const RulesModal: FC<IProps> = ({ open, closeModal }) => {
   return (
     <div>
       <Dialog open={open} TransitionComponent={Transition} keepMounted onClose={closeModal} aria-describedby="alert-dialog-slide-description">
-        <DialogTitle>
-          <Typography variant="h4">How To Play</Typography>
-          <Typography variant="h6">Guess the song in 6 tries.</Typography>
-        </DialogTitle>
+        <DialogTitle>How To Play</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
+            {'Guess the song in 6 tries.'}
             <List dense>
               <ListItemText>• Each guess must be a valid song.</ListItemText>
               <ListItemText>• The color of the tiles will change if your guess belongs to the same album.</ListItemText>
