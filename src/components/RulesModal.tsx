@@ -38,10 +38,10 @@ const RulesModal: FC<IProps> = ({ open, closeModal }) => {
             <List>TODO: Add visual examples</List>
             <Divider />
             <Typography variant="body1">
-              <Link to="/login">Log in or create an account</Link> to link your stats.
+              <Link to="/auth">Log in or create an account</Link> to link your stats.
             </Typography>
             <Divider />
-            <Typography variant="body2">A new puzzle is released daily at midnight. If you haven’t already, you can sign up for our daily reminder email.</Typography>
+            <Typography variant="body2">A new puzzle is released daily at midnight. If you haven't already, you can sign up for our daily reminder email.</Typography>
           </DialogContentText>
         </DialogContent>
       </Dialog>

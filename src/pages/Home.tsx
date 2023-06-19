@@ -16,7 +16,9 @@ const Home = () => {
         <Link to="/play">
           <Button variant="outlined">How to play</Button>
         </Link>
-        <Button variant="outlined">Log in</Button>
+        <Link to="/auth">
+          <Button variant="outlined">Log in</Button>
+        </Link>
         <Link to="/play">
           <Button variant="contained">Play</Button>
         </Link>
