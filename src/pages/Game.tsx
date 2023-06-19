@@ -1,9 +1,7 @@
 import { FC } from 'react';
 import Navbar from '../components/Navbar';
 
-interface IProps {}
-
-const Game: FC<IProps> = () => {
+const Game: FC = () => {
   return (
     <>
       <Navbar />
