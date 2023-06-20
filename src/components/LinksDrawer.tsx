@@ -1,18 +1,34 @@
-import { Box, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SwipeableDrawer } from '@mui/material';
+import { Box, Divider, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SwipeableDrawer, styled, IconButton } from '@mui/material';
 import { FC } from 'react';
 import RedditIcon from '@mui/icons-material/Reddit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 import YouTubeIcon from '@mui/icons-material/YouTube';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 interface IProps {
   open: boolean;
   toggleDrawer: (open: boolean) => void;
 }
 
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar
+}));
+
 const LinksDrawer: FC<IProps> = ({ open, toggleDrawer }) => {
   return (
     <SwipeableDrawer anchor="left" open={open} onClose={() => toggleDrawer(false)} onOpen={() => toggleDrawer(true)}>
+      <DrawerHeader>
+        <IconButton onClick={() => toggleDrawer(false)}>
+          <ChevronLeftIcon />
+        </IconButton>
+      </DrawerHeader>
+      <Divider />
       <Box sx={{ width: 250 }} role="presentation" onClick={() => toggleDrawer(false)} onKeyDown={() => toggleDrawer(false)}>
         <List>
           <ListItem key="discord">
