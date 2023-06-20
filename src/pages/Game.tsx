@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useLocation } from 'react-router-dom';
-import { Alert, Autocomplete, CircularProgress, Snackbar, TextField } from '@mui/material';
+import { Alert, Autocomplete, Box, Card, CardContent, CircularProgress, Snackbar, TextField, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import { collection, getDocs } from 'firebase/firestore';
@@ -14,6 +14,8 @@ export interface Song {
   album?: string;
   correct?: boolean;
 }
+
+const GUESS_LIMIT = 6;
 
 const Game: FC = () => {
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
@@ -95,6 +97,7 @@ const Game: FC = () => {
     if (!song) return;
     console.log('Chosen song: ', song?.name);
 
+    song.correct = Math.random() === 0; // temporary until logic for daily song is implemented
     setGuesses((prevGuesses) => [...prevGuesses, song]);
   };
 
@@ -107,37 +110,37 @@ const Game: FC = () => {
         </Alert>
       </Snackbar>
 
-      <ProgressRows guesses={guesses} />
-
-      {/* TODO: disable songs that were already selected */}
-      <Autocomplete
-        id="song-options"
-        sx={{ width: 300 }}
-        open={openAutocomplete}
-        onOpen={() => setOpenAutocomplete(true)}
-        onChange={(_event, value) => handleAutocompleteChange(value)}
-        onClose={() => setOpenAutocomplete(false)}
-        isOptionEqualToValue={(option: Song, value: Song) => option.name === value.name}
-        getOptionLabel={(option: Song) => option.name}
-        options={options}
-        getOptionDisabled={(option) => guesses.some((song) => song.name === option.name)}
-        loading={loading}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Song options"
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                  {params.InputProps.endAdornment}
-                </>
-              )
-            }}
-          />
-        )}
-      />
+      <Box sx={{ padding: '2rem', display: 'grid', gridTemplateRows: `repeat(${GUESS_LIMIT + 1}, 1fr)`, justifyItems: 'center', alignItems: 'center', gap: '1rem' }}>
+        <ProgressRows guesses={guesses} />
+        <Autocomplete
+          id="song-options"
+          sx={{ width: 300, gridRow: 7, padding: '1rem' }}
+          open={openAutocomplete}
+          onOpen={() => setOpenAutocomplete(true)}
+          onChange={(_event, value) => handleAutocompleteChange(value)}
+          onClose={() => setOpenAutocomplete(false)}
+          isOptionEqualToValue={(option: Song, value: Song) => option.name === value.name}
+          getOptionLabel={(option: Song) => option.name}
+          options={options}
+          getOptionDisabled={(option) => guesses.some((song) => song.name === option.name) || guesses.length === GUESS_LIMIT}
+          loading={loading}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Song options"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                )
+              }}
+            />
+          )}
+        />
+      </Box>
     </>
   );
 };

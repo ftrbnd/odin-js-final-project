@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Song } from '../pages/Game';
-import { Typography } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 
 interface IProps {
   guesses: Song[];
@@ -8,11 +8,15 @@ interface IProps {
 
 const ProgressRows: FC<IProps> = ({ guesses }) => {
   return (
-    <div>
+    <>
       {guesses.map((guess) => (
-        <Typography variant="subtitle1">{guess.name}</Typography>
+        <Card sx={{ minWidth: 275, display: 'grid', justifyItems: 'center' }}>
+          <CardContent>
+            <Typography variant="subtitle1">{guess.name}</Typography>
+          </CardContent>
+        </Card>
       ))}
-    </div>
+    </>
   );
 };
 
