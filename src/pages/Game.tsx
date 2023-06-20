@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useLocation } from 'react-router-dom';
-import { Alert, Autocomplete, Box, Card, CardContent, CircularProgress, Snackbar, TextField, Typography } from '@mui/material';
+import { Alert, Autocomplete, Box, CircularProgress, Snackbar, TextField } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import { collection, getDocs } from 'firebase/firestore';
