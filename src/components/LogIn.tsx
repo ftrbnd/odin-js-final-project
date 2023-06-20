@@ -61,7 +61,17 @@ const LogIn: FC = () => {
       navigate('/play');
     } catch (e: any) {
       console.error(e);
-      setFormValid(e.message);
+
+      switch (e.code) {
+        case 'auth/wrong-password':
+          setFormValid('Password is incorrect.');
+          break;
+        case 'auth/user-not-found':
+          setFormValid('User does not exist.');
+          break;
+        default:
+          setFormValid(e.code);
+      }
     }
   };
 

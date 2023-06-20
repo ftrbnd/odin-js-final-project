@@ -81,7 +81,14 @@ const SignUp: FC = () => {
       navigate('/play');
     } catch (e: any) {
       console.error(e);
-      setFormValid(e.message);
+
+      switch (e.code) {
+        case 'auth/email-already-in-use':
+          setFormValid('Email is already in use! Log in instead.');
+          break;
+        default:
+          setFormValid(e.code);
+      }
     }
   };
 
