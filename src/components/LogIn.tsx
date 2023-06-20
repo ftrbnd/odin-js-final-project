@@ -58,7 +58,9 @@ const LogIn: FC = () => {
     try {
       await signInWithEmailAndPassword(auth, emailInput, passwordInput);
       setFormValid('');
-      navigate('/play');
+      navigate('/play', {
+        state: 'LOG_IN'
+      });
     } catch (e: any) {
       console.error(e);
 

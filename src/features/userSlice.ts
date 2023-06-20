@@ -6,7 +6,7 @@ interface User {
 }
 
 const initialState = {
-  user: {
+  profile: {
     username: '',
     avatar: ''
   },
@@ -18,10 +18,10 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     logIn: (state, action: PayloadAction<User>) => {
-      state.user = action.payload;
+      state.profile = action.payload;
     },
     logOut: (state) => {
-      state.user = initialState.user;
+      state.profile = initialState.profile;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;

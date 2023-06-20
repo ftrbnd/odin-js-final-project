@@ -78,7 +78,9 @@ const SignUp: FC = () => {
           displayName: usernameInput
         });
       setFormValid('');
-      navigate('/play');
+      navigate('/play', {
+        state: 'SIGN_UP'
+      });
     } catch (e: any) {
       console.error(e);
 
