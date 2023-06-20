@@ -6,11 +6,13 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../utils/firebase';
+import ProgressRows from '../components/ProgressRows';
 
-interface Song {
+export interface Song {
   name: string;
   link: string;
   album?: string;
+  correct?: boolean;
 }
 
 const Game: FC = () => {
@@ -23,6 +25,8 @@ const Game: FC = () => {
 
   const { state } = useLocation();
   const user = useSelector((state: RootState) => state.user);
+
+  const [guesses, setGuesses] = useState<Song[]>([]);
 
   useEffect(() => {
     switch (state) {
@@ -79,12 +83,19 @@ const Game: FC = () => {
     }
   }, [openAutocomplete]);
 
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
 
     setShowSnackbar(false);
+  };
+
+  const handleAutocompleteChange = (song: Song | null) => {
+    if (!song) return;
+    console.log('Chosen song: ', song?.name);
+
+    setGuesses((prevGuesses) => [...prevGuesses, song]);
   };
 
   return (
@@ -96,11 +107,15 @@ const Game: FC = () => {
         </Alert>
       </Snackbar>
 
+      <ProgressRows guesses={guesses} />
+
+      {/* TODO: disable songs that were already selected */}
       <Autocomplete
         id="song-options"
         sx={{ width: 300 }}
         open={openAutocomplete}
         onOpen={() => setOpenAutocomplete(true)}
+        onChange={(_event, value) => handleAutocompleteChange(value)}
         onClose={() => setOpenAutocomplete(false)}
         isOptionEqualToValue={(option: Song, value: Song) => option.name === value.name}
         getOptionLabel={(option: Song) => option.name}
