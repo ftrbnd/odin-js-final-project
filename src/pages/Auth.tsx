@@ -48,9 +48,10 @@ const Auth: FC = () => {
       <Box sx={{ margin: '0 auto', padding: '1rem', width: '30rem' }}>
         <Paper elevation={3} style={{ padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {checked ? <Typography variant="h5">Create an account</Typography> : <Typography variant="h5">Log in to your account</Typography>}
-          <br />
+          <div style={{ marginTop: '10px', width: '100%' }}>
+            <Divider>{checked ? 'or Log In' : 'or Sign Up'}</Divider>
+          </div>
           <Switch checked={checked} onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />
-          <br />
           {checked ? <SignUp /> : <LogIn />}
 
           <div style={{ marginTop: '10px', width: '100%' }}>
