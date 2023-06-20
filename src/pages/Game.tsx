@@ -120,6 +120,7 @@ const Game: FC = () => {
         isOptionEqualToValue={(option: Song, value: Song) => option.name === value.name}
         getOptionLabel={(option: Song) => option.name}
         options={options}
+        getOptionDisabled={(option) => guesses.some((song) => song.name === option.name)}
         loading={loading}
         renderInput={(params) => (
           <TextField
