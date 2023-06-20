@@ -1,9 +1,9 @@
+import { FC } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { auth } from '../utils/firebase';
 
-const Home = () => {
-  // const dispatch = useDispatch();
-
+const Home: FC = () => {
   return (
     <Stack justifyContent="center" alignItems="center" height="100vh" spacing={3}>
       <Typography variant="h2" align="center" fontWeight="bold">
@@ -13,12 +13,19 @@ const Home = () => {
         Get 6 chances to guess an EDEN song.
       </Typography>
       <Stack direction="row" alignItems="center" spacing={2}>
-        <Link to="/play">
-          <Button variant="outlined">How to play</Button>
-        </Link>
-        <Link to="/auth">
-          <Button variant="outlined">Log in</Button>
-        </Link>
+        {!auth.currentUser ? (
+          <>
+            {' '}
+            <Link to="/play">
+              <Button variant="outlined">How to play</Button>
+            </Link>
+            <Link to="/auth">
+              <Button variant="outlined">Log in</Button>
+            </Link>
+          </>
+        ) : (
+          <Typography variant="h6">Welcome back, {auth.currentUser?.displayName}</Typography>
+        )}
         <Link to="/play">
           <Button variant="contained">Play</Button>
         </Link>

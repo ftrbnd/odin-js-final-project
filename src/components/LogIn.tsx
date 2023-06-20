@@ -1,9 +1,11 @@
-import { FC, MouseEvent, useEffect, useState } from 'react';
+import { FC, MouseEvent, useState } from 'react';
 import { TextField, InputAdornment, FormControl, InputLabel, IconButton, Button, Alert, Stack, OutlinedInput } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LoginIcon from '@mui/icons-material/Login';
 import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../utils/firebase';
 
 const isValidEmail = (email: string) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
 
@@ -16,15 +18,8 @@ const LogIn: FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [formValid, setFormValid] = useState('');
-  const [success, setSuccess] = useState(false);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (success) {
-      navigate('/play');
-    }
-  }, [success, navigate]);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (e: MouseEvent<HTMLButtonElement>) => {
@@ -49,7 +44,7 @@ const LogIn: FC = () => {
     setPasswordError(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (emailError || !emailInput) {
       setFormValid('Invalid email!');
       return;
@@ -59,9 +54,15 @@ const LogIn: FC = () => {
       setFormValid('Password must be 5-20 characters long.');
       return;
     }
-    setFormValid('');
 
-    setSuccess(true);
+    try {
+      await signInWithEmailAndPassword(auth, emailInput, passwordInput);
+      setFormValid('');
+      navigate('/play');
+    } catch (e: any) {
+      console.error(e);
+      setFormValid(e.message);
+    }
   };
 
   return (
@@ -116,12 +117,6 @@ const LogIn: FC = () => {
           <Alert severity="error">{formValid}</Alert>
         </Stack>
       )}
-
-      {/* {success && (
-        <Stack sx={{ width: '100%', paddingTop: '10px' }} spacing={2}>
-          <Alert severity="success">{success}</Alert>
-        </Stack>
-      )} */}
 
       {/* <div style={{ marginTop: '7px', fontSize: '10px' }}>
         <a>Forgot Password?</a>

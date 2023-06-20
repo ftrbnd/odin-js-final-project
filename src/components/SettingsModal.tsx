@@ -1,4 +1,4 @@
-import { Divider, List, ListItemText, Typography } from '@mui/material';
+import { Button, DialogActions, Divider, List, ListItemText, Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
@@ -7,6 +7,9 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { FC, forwardRef } from 'react';
 import styles from '../styles/SettingsModal.module.scss';
+import { signOut } from 'firebase/auth';
+import { auth } from '../utils/firebase';
+import { useNavigate } from 'react-router-dom';
 
 interface IProps {
   open: boolean;
@@ -23,6 +26,14 @@ const Transition = forwardRef(function Transition(
 });
 
 const SettingsModal: FC<IProps> = ({ open, closeModal }) => {
+  const navigate = useNavigate();
+
+  const logOut = async () => {
+    await signOut(auth);
+    closeModal();
+    navigate('/');
+  };
+
   return (
     <div>
       <Dialog fullWidth open={open} TransitionComponent={Transition} keepMounted onClose={closeModal} aria-describedby="alert-dialog-slide-description">
@@ -40,6 +51,17 @@ const SettingsModal: FC<IProps> = ({ open, closeModal }) => {
             <Typography variant="subtitle2">© 2023 giosalad</Typography>
           </DialogContentText>
         </DialogContent>
+        <DialogActions>
+          {auth.currentUser ? (
+            <Button autoFocus onClick={logOut}>
+              Log Out
+            </Button>
+          ) : (
+            <Button autoFocus onClick={() => navigate('/auth')}>
+              Log In
+            </Button>
+          )}
+        </DialogActions>
       </Dialog>
     </div>
   );
