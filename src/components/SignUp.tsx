@@ -1,8 +1,9 @@
-import { FC, MouseEvent, useState } from 'react';
+import { FC, MouseEvent, useEffect, useState } from 'react';
 import { TextField, InputAdornment, FormControl, InputLabel, IconButton, Button, Alert, Stack, OutlinedInput } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LoginIcon from '@mui/icons-material/Login';
+import { useNavigate } from 'react-router-dom';
 
 const isValidEmail = (email: string) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
 
@@ -17,7 +18,15 @@ const SignUp: FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [formValid, setFormValid] = useState('');
-  const [success, setSuccess] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (success) {
+      navigate('/play');
+    }
+  }, [success, navigate]);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (e: MouseEvent<HTMLButtonElement>) => {
@@ -34,7 +43,7 @@ const SignUp: FC = () => {
   };
 
   const handleUsername = () => {
-    if (!usernameInput) {
+    if (!usernameInput || usernameInput.length < 3 || usernameInput.length > 10) {
       setUsernameError(true);
       return;
     }
@@ -52,24 +61,23 @@ const SignUp: FC = () => {
   };
 
   const handleSubmit = () => {
-    setSuccess('Submitting...');
-    if (usernameError || !usernameInput) {
-      setFormValid('Username is set btw 5 - 15 characters long. Please Re-Enter');
+    if (emailError || !emailInput) {
+      setFormValid('Invalid email!');
       return;
     }
 
-    if (emailError || !emailInput) {
-      setFormValid('Email is Invalid. Please Re-Enter');
+    if (usernameError || !usernameInput) {
+      setFormValid('Username must be 3-10 characters long.');
       return;
     }
 
     if (passwordError || !passwordInput) {
-      setFormValid('Password is set btw 5 - 20 characters long. Please Re-Enter');
+      setFormValid('Password must be 5-20 characters long.');
       return;
     }
     setFormValid('');
 
-    setSuccess('Form Submitted Successfully');
+    setSuccess(true);
   };
 
   return (
@@ -81,7 +89,7 @@ const SignUp: FC = () => {
         fullWidth
         error={emailError}
         variant="outlined"
-        id="outlined-basic"
+        id="outlined-basic-email"
         sx={{ width: '100%', marginTop: '5px' }}
         onBlur={handleEmail}
         onChange={(event) => {
@@ -96,7 +104,7 @@ const SignUp: FC = () => {
         fullWidth
         error={usernameError}
         variant="outlined"
-        id="outlined-basic"
+        id="outlined-basic-username"
         sx={{ width: '100%', marginTop: '10px' }}
         onChange={(event) => {
           setUsernameInput(event.target.value);
@@ -140,11 +148,11 @@ const SignUp: FC = () => {
         </Stack>
       )}
 
-      {success && (
+      {/* {success && (
         <Stack sx={{ width: '100%', paddingTop: '10px' }} spacing={2}>
           <Alert severity="success">{success}</Alert>
         </Stack>
-      )}
+      )} */}
 
       {/* <div style={{ marginTop: '7px', fontSize: '10px' }}>
         <a>Forgot Password?</a>

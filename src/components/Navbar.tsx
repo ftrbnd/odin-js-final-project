@@ -28,13 +28,13 @@ const Navbar: FC = () => {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar position="sticky" sx={{ width: '100%', padding: '1rem' }}>
-        <Toolbar variant="dense">
+      <AppBar position="sticky" enableColorOnDark>
+        <Toolbar>
           <IconButton aria-label="menu" edge="start" color="inherit" size="large" onClick={() => toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
           <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <Typography variant="h1" sx={{ flexGrow: 1 }} noWrap fontSize="4rem">
+            <Typography variant="h6" sx={{ flexGrow: 1 }} noWrap>
               EDEN Heardle
             </Typography>
           </Link>
