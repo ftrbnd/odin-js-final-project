@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { Alert, Autocomplete, Box, Card, CardMedia, CircularProgress, IconButton, Snackbar, TextField, Typography, useTheme } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { db } from '../utils/firebase';
 import ProgressRows from '../components/ProgressRows';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -32,8 +32,38 @@ const Game: FC = () => {
 
   const [guesses, setGuesses] = useState<Song[]>([]);
   const [playing, setPlaying] = useState(false);
+  const [dailySong, setDailySong] = useState<Song>({
+    name: '',
+    link: ''
+  });
 
   const theme = useTheme();
+
+  useEffect(() => {
+    // if today is same day as song's day, set it to state
+    // else if today is day after the song's date, choose a new one from collection/songs
+
+    async function fetchDailySong() {
+      console.log('Fetching daily song...');
+
+      const docRef = doc(db, 'daily_song', 'song');
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const song = docSnap.data();
+        setDailySong({
+          name: song.name,
+          link: song.link,
+          album: song.album
+        });
+        console.log('Found daily song: ', song.name);
+      } else {
+        console.log('No daily song found in database!');
+      }
+    }
+
+    fetchDailySong();
+  }, []);
 
   useEffect(() => {
     switch (state) {
@@ -102,6 +132,9 @@ const Game: FC = () => {
     if (!song) return;
     console.log('Chosen song: ', song?.name);
 
+    //TODO: determine if song is correct
+    // - then show snackbar according to guess
+
     song.correct = Math.random() === 0; // temporary until logic for daily song is implemented
     setGuesses((prevGuesses) => [...prevGuesses, song]);
   };
@@ -136,7 +169,7 @@ const Game: FC = () => {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Song options"
+              label="Choose a song"
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (
