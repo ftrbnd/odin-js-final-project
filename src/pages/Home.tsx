@@ -16,7 +16,7 @@ const Home: FC = () => {
         {!auth.currentUser ? (
           <>
             {' '}
-            <Link to="/play">
+            <Link to="/play" state={'SHOW_RULES'}>
               <Button variant="outlined">How to play</Button>
             </Link>
             <Link to="/auth">

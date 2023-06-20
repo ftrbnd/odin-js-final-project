@@ -14,12 +14,16 @@ import LinksDrawer from './LinksDrawer';
 import { Link } from 'react-router-dom';
 import SettingsModal from './SettingsModal';
 
-const Navbar: FC = () => {
+interface IProps {
+  showRules: boolean;
+  setShowRules: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Navbar: FC<IProps> = ({ showRules, setShowRules }) => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
 
   const [showDrawer, setShowDrawer] = useState(false);
-  const [showRules, setShowRules] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
   const toggleDrawer = (open: boolean) => {

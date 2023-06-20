@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Alert, Autocomplete, Box, Card, CardMedia, CircularProgress, IconButton, Snackbar, TextField, useTheme } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
@@ -27,7 +27,8 @@ const Game: FC = () => {
   const [options, setOptions] = useState<readonly Song[]>([]);
   const loading = openAutocomplete && options.length === 0;
 
-  const { state } = useLocation();
+  const location = useLocation();
+  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
 
   const [guesses, setGuesses] = useState<Song[]>([]);
@@ -38,6 +39,7 @@ const Game: FC = () => {
   });
 
   const theme = useTheme();
+  const [showRules, setShowRules] = useState(false);
 
   useEffect(() => {
     // if today is same day as song's day, set it to state
@@ -66,17 +68,23 @@ const Game: FC = () => {
   }, []);
 
   useEffect(() => {
-    switch (state) {
+    switch (location.state) {
       case 'LOG_IN':
         setShowSnackbar(true);
         setSnackbarMessage(`Welcome back ${user.profile.username}!`);
+        navigate(location.pathname, { replace: true });
         break;
       case 'SIGN_UP':
         setShowSnackbar(true);
         setSnackbarMessage(`Welcome ${user.profile.username}!`);
+        navigate(location.pathname, { replace: true });
+        break;
+      case 'SHOW_RULES':
+        setShowRules(true);
+        navigate(location.pathname, { replace: true });
         break;
     }
-  }, [state, user.profile.username]);
+  }, [location.pathname, location.state, navigate, user.profile.username]);
 
   useEffect(() => {
     let active = true;
@@ -145,7 +153,7 @@ const Game: FC = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100vh' }}>
-      <Navbar />
+      <Navbar showRules={showRules} setShowRules={setShowRules} />
       <Snackbar open={showSnackbar} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         <Alert severity="success" onClose={handleClose} variant="filled">
           {snackbarMessage}
