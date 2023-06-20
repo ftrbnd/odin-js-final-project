@@ -10,7 +10,7 @@ const ProgressRows: FC<IProps> = ({ guesses }) => {
   return (
     <>
       {guesses.map((guess) => (
-        <Card sx={{ minWidth: 275, display: 'grid', justifyItems: 'center' }}>
+        <Card elevation={6} sx={{ minWidth: 275, display: 'grid', justifyItems: 'center' }}>
           <CardContent>
             <Typography variant="subtitle1">{guess.name}</Typography>
           </CardContent>
