@@ -39,17 +39,15 @@ const SettingsModal: FC<IProps> = ({ open, closeModal }) => {
       <Dialog fullWidth open={open} TransitionComponent={Transition} keepMounted onClose={closeModal} aria-describedby="alert-dialog-slide-description">
         <DialogTitle>Settings</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            <List>
-              <ListItemText primary="Feedback" secondary="Email" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
-              <Divider />
-              <ListItemText primary="Community" secondary="Discord" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
-              <Divider />
-              <ListItemText primary="Questions?" secondary="FAQ" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
-              <Divider />
-            </List>
-            <Typography variant="subtitle2">© 2023 giosalad</Typography>
-          </DialogContentText>
+          <List>
+            <ListItemText primary="Feedback" secondary="Email" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
+            <Divider />
+            <ListItemText primary="Community" secondary="Discord" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
+            <Divider />
+            <ListItemText primary="Questions?" secondary="FAQ" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
+            <Divider />
+          </List>
+          <div>© 2023 giosalad</div>
         </DialogContent>
         <DialogActions>
           {auth.currentUser ? (
