@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Alert, Autocomplete, Box, Card, CardMedia, CircularProgress, IconButton, Snackbar, TextField, useTheme } from '@mui/material';
@@ -19,6 +19,14 @@ export interface Song {
 
 const GUESS_LIMIT = 6;
 
+const emptySong: Song = {
+  name: 'ㅤ',
+  link: '',
+  album: ''
+};
+
+const initialGuessState = [emptySong, emptySong, emptySong, emptySong, emptySong, emptySong];
+
 const Game: FC = () => {
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
@@ -31,7 +39,8 @@ const Game: FC = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
 
-  const [guesses, setGuesses] = useState<Song[]>([]);
+  const [guesses, setGuesses] = useState<Song[]>(initialGuessState);
+  const guessCount = useRef<number>(0);
   const [playing, setPlaying] = useState(false);
   const [dailySong, setDailySong] = useState<Song>({
     name: '',
@@ -143,8 +152,26 @@ const Game: FC = () => {
     //TODO: determine if song is correct
     // - then show snackbar according to guess
 
+    guessCount.current++;
     song.correct = Math.random() === 0; // temporary until logic for daily song is implemented
-    setGuesses((prevGuesses) => [...prevGuesses, song]);
+
+    setGuesses((prevGuesses) => {
+      const newGuesses = [];
+
+      for (let i = 0; i < prevGuesses.length; i++) {
+        if (prevGuesses[i] !== emptySong) {
+          newGuesses.push(prevGuesses[i]);
+        } else {
+          // found the first empty song
+          newGuesses.push(song);
+          const remainingGuesses = new Array(GUESS_LIMIT - guessCount.current).fill(emptySong);
+          newGuesses.push(...remainingGuesses);
+          break;
+        }
+      }
+
+      return newGuesses;
+    });
   };
 
   const togglePlaying = () => {
@@ -160,11 +187,12 @@ const Game: FC = () => {
         </Alert>
       </Snackbar>
 
-      <Box sx={{ padding: '2rem', display: 'grid', gridTemplateRows: `repeat(${GUESS_LIMIT + 1}, 1fr)`, justifyItems: 'center', alignItems: 'center', gap: '1rem' }}>
-        <ProgressRows guesses={guesses} />
+      <ProgressRows guesses={guesses} limit={GUESS_LIMIT} />
+
+      <Box sx={{ display: 'grid', gridTemplateRows: 'auto auto', alignItems: 'center' }}>
         <Autocomplete
           id="song-options"
-          sx={{ width: 300, gridRow: 7, padding: '1rem' }}
+          sx={{ width: 300, padding: '1rem', justifySelf: 'center' }}
           open={openAutocomplete}
           onOpen={() => setOpenAutocomplete(true)}
           onChange={(_event, value) => handleAutocompleteChange(value)}
@@ -172,7 +200,7 @@ const Game: FC = () => {
           isOptionEqualToValue={(option: Song, value: Song) => option.name === value.name}
           getOptionLabel={(option: Song) => option.name}
           options={options}
-          getOptionDisabled={(option) => guesses.some((song) => song.name === option.name) || guesses.length === GUESS_LIMIT}
+          getOptionDisabled={(option) => guesses.some((song) => song.name === option.name) || guessCount.current === GUESS_LIMIT}
           loading={loading}
           renderInput={(params) => (
             <TextField
@@ -190,16 +218,15 @@ const Game: FC = () => {
             />
           )}
         />
+        <Card elevation={12} sx={{ display: 'grid', gridTemplateColumns: '1fr', justifyItems: 'center', padding: '8px', margin: '16px' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
+            <IconButton aria-label="play/pause" onClick={togglePlaying}>
+              {playing ? <PauseIcon sx={{ height: 38, width: 38 }} /> : <PlayArrowIcon sx={{ height: 38, width: 38 }} />}
+            </IconButton>
+          </Box>
+          <CardMedia component="img" sx={{ width: 35, height: 35 }} image={theme.palette.mode === 'dark' ? 'https://i.imgur.com/tjACJH3.png' : 'https://i.imgur.com/NwRNjlK.png'} alt="EDEN logo" />
+        </Card>
       </Box>
-
-      <Card elevation={12} sx={{ display: 'grid', gridTemplateColumns: '1fr', justifyItems: 'center', padding: '8px', margin: '16px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-          <IconButton aria-label="play/pause" onClick={togglePlaying}>
-            {playing ? <PauseIcon sx={{ height: 38, width: 38 }} /> : <PlayArrowIcon sx={{ height: 38, width: 38 }} />}
-          </IconButton>
-        </Box>
-        <CardMedia component="img" sx={{ width: 35, height: 35 }} image={theme.palette.mode === 'dark' ? 'https://i.imgur.com/tjACJH3.png' : 'https://i.imgur.com/NwRNjlK.png'} alt="EDEN logo" />
-      </Card>
     </Box>
   );
 };
