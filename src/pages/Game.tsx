@@ -1,14 +1,13 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Alert, Autocomplete, Box, Card, CardMedia, CircularProgress, IconButton, Snackbar, TextField, useTheme } from '@mui/material';
+import { Alert, Autocomplete, Box, CircularProgress, Snackbar, TextField } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { db } from '../utils/firebase';
 import ProgressRows from '../components/ProgressRows';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import PauseIcon from '@mui/icons-material/Pause';
+import AudioPlayer from '../components/AudioPlayer';
 
 export interface Song {
   name: string;
@@ -47,7 +46,6 @@ const Game: FC = () => {
     link: ''
   });
 
-  const theme = useTheme();
   const [showRules, setShowRules] = useState(false);
 
   useEffect(() => {
@@ -190,9 +188,11 @@ const Game: FC = () => {
       <ProgressRows guesses={guesses} limit={GUESS_LIMIT} />
 
       <Box sx={{ display: 'grid', gridTemplateRows: 'auto auto', alignItems: 'center' }}>
+        <AudioPlayer start={0} duration={1} link={dailySong.link} isPlaying={playing} togglePlaying={togglePlaying} />
+
         <Autocomplete
           id="song-options"
-          sx={{ width: 300, padding: '1rem', justifySelf: 'center' }}
+          sx={{ width: '100%', padding: '1rem', justifySelf: 'center' }}
           open={openAutocomplete}
           onOpen={() => setOpenAutocomplete(true)}
           onChange={(_event, value) => handleAutocompleteChange(value)}
@@ -218,14 +218,6 @@ const Game: FC = () => {
             />
           )}
         />
-        <Card elevation={12} sx={{ display: 'grid', gridTemplateColumns: '1fr', justifyItems: 'center', padding: '8px', margin: '16px' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-            <IconButton aria-label="play/pause" onClick={togglePlaying}>
-              {playing ? <PauseIcon sx={{ height: 38, width: 38 }} /> : <PlayArrowIcon sx={{ height: 38, width: 38 }} />}
-            </IconButton>
-          </Box>
-          <CardMedia component="img" sx={{ width: 35, height: 35 }} image={theme.palette.mode === 'dark' ? 'https://i.imgur.com/tjACJH3.png' : 'https://i.imgur.com/NwRNjlK.png'} alt="EDEN logo" />
-        </Card>
       </Box>
     </Box>
   );
