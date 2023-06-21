@@ -1,21 +1,18 @@
 import { Box, Card, IconButton } from '@mui/material';
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 
 interface IProps {
   start: number;
-  duration: number;
+  currentDuration: number;
+  totalDuration: number;
   link: string;
   isPlaying: boolean;
   togglePlaying: () => void;
 }
 
-const AudioPlayer: FC<IProps> = ({ start, duration, link, isPlaying, togglePlaying }) => {
-  useEffect(() => {
-    console.log(start, duration, link, isPlaying, togglePlaying);
-  }, []);
-
+const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, isPlaying, togglePlaying }) => {
   return (
     <Card elevation={12} sx={{ display: 'grid', gridTemplateColumns: '1fr', justifyItems: 'center', padding: '8px', margin: '16px' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
