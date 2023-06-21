@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Paper, Switch, Box, Typography, AppBar, Toolbar, Divider, Button } from '@mui/material';
+import { Paper, Switch, Box, Typography, AppBar, Toolbar, Divider, Button, Stack } from '@mui/material';
 import SignUp from '../components/SignUp';
 import LogIn from '../components/LogIn';
 import { Link, useNavigate } from 'react-router-dom';
@@ -34,7 +34,7 @@ const Auth: FC = () => {
   };
 
   return (
-    <>
+    <Stack height="100vh" spacing={3} alignItems="center">
       <AppBar position="static" enableColorOnDark>
         <Toolbar sx={{ display: 'grid', justifyItems: 'center' }}>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
@@ -45,7 +45,7 @@ const Auth: FC = () => {
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ margin: '0 auto', padding: '1rem', width: '30rem' }}>
+      <Box sx={{ margin: '0 auto', padding: '1rem', width: { xs: '100%', sm: '30rem', md: '30rem' } }}>
         <Paper elevation={3} style={{ padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {checked ? <Typography variant="h5">Create an account</Typography> : <Typography variant="h5">Log in to your account</Typography>}
           <div style={{ marginTop: '10px', width: '100%' }}>
@@ -71,7 +71,7 @@ const Auth: FC = () => {
           </div>
         </Paper>
       </Box>
-    </>
+    </Stack>
   );
 };
 

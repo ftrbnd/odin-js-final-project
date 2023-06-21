@@ -1,4 +1,4 @@
-import { AppBar, Box, IconButton, Toolbar, Typography } from '@mui/material';
+import { AppBar, Badge, Box, IconButton, Menu, MenuItem, Toolbar, Typography, useMediaQuery } from '@mui/material';
 import { FC, useContext, useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -13,6 +13,7 @@ import RulesModal from './RulesModal';
 import LinksDrawer from './LinksDrawer';
 import { Link } from 'react-router-dom';
 import SettingsModal from './SettingsModal';
+import MoreIcon from '@mui/icons-material/MoreVert';
 
 interface IProps {
   showRules: boolean;
@@ -26,9 +27,86 @@ const Navbar: FC<IProps> = ({ showRules, setShowRules }) => {
   const [showDrawer, setShowDrawer] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
   const toggleDrawer = (open: boolean) => {
     setShowDrawer(open);
   };
+
+  const handleMobileMenuClose = () => {
+    setMobileMoreAnchorEl(null);
+  };
+
+  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const mobileMenuId = 'primary-search-account-menu-mobile';
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right'
+      }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right'
+      }}
+      open={isMobileMenuOpen}
+      onClose={handleMobileMenuClose}
+    >
+      <MenuItem>
+        <IconButton aria-label="stats" color="inherit" size="large">
+          <ShowChartOutlinedIcon />
+        </IconButton>
+        <p>Stats</p>
+      </MenuItem>
+      <MenuItem>
+        <IconButton aria-label="leaderboard" color="inherit" size="large">
+          <LeaderboardOutlinedIcon />
+        </IconButton>
+        <p>Leaderboard</p>
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          setShowRules(true);
+          handleMobileMenuClose();
+        }}
+      >
+        <IconButton aria-label="rules" color="inherit" size="large">
+          <HelpOutlineIcon />
+        </IconButton>
+        <p>Rules</p>
+      </MenuItem>
+      <MenuItem onClick={colorMode.toggleColorMode}>
+        <IconButton aria-label="theme" color="inherit" sx={{ ml: 1 }}>
+          {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+        </IconButton>
+        <p>Theme</p>
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          setShowSettings(true);
+          handleMobileMenuClose();
+        }}
+      >
+        <IconButton aria-label="settings" color="inherit" size="large">
+          <SettingsIcon />
+        </IconButton>
+        <p>Settings</p>
+      </MenuItem>
+      {/* <MenuItem onClick={handleProfileMenuOpen}>
+        <IconButton size="large" aria-label="account of current user" aria-controls="primary-search-account-menu" aria-haspopup="true" color="inherit">
+          <AccountCircle />
+        </IconButton>
+        <p>Profile</p>
+      </MenuItem> */}
+    </Menu>
+  );
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -43,7 +121,7 @@ const Navbar: FC<IProps> = ({ showRules, setShowRules }) => {
             </Typography>
           </Link>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton aria-label="stats" color="inherit" size="large">
               <ShowChartOutlinedIcon />
             </IconButton>
@@ -62,8 +140,14 @@ const Navbar: FC<IProps> = ({ showRules, setShowRules }) => {
             <RulesModal open={showRules} closeModal={() => setShowRules(false)} />
             <SettingsModal open={showSettings} closeModal={() => setShowSettings(false)} />
           </Box>
+          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <IconButton size="large" edge="end" aria-label="mobile menu" aria-haspopup="true" onClick={handleMobileMenuOpen} color="inherit">
+              <MoreIcon />
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
+      {renderMobileMenu}
       <LinksDrawer open={showDrawer} toggleDrawer={toggleDrawer} />
     </Box>
   );

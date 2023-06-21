@@ -5,7 +5,7 @@ import { auth } from '../utils/firebase';
 
 const Home: FC = () => {
   return (
-    <Stack justifyContent="center" alignItems="center" height="100vh" spacing={3}>
+    <Stack justifyContent="center" alignItems="center" height="100vh" spacing={3} padding="2rem">
       <Typography variant="h2" align="center" fontWeight="bold">
         EDEN Heardle
       </Typography>
