@@ -1,4 +1,4 @@
-import { AppBar, Badge, Box, IconButton, Menu, MenuItem, Toolbar, Typography, useMediaQuery } from '@mui/material';
+import { AppBar, Box, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import { FC, useContext, useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
