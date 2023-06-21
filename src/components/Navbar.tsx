@@ -99,12 +99,6 @@ const Navbar: FC<IProps> = ({ showRules, setShowRules }) => {
         </IconButton>
         <p>Settings</p>
       </MenuItem>
-      {/* <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton size="large" aria-label="account of current user" aria-controls="primary-search-account-menu" aria-haspopup="true" color="inherit">
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem> */}
     </Menu>
   );
 
@@ -121,7 +115,7 @@ const Navbar: FC<IProps> = ({ showRules, setShowRules }) => {
             </Typography>
           </Link>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ display: { xs: 'none', sm: 'flex', md: 'flex' } }}>
             <IconButton aria-label="stats" color="inherit" size="large">
               <ShowChartOutlinedIcon />
             </IconButton>
@@ -140,8 +134,8 @@ const Navbar: FC<IProps> = ({ showRules, setShowRules }) => {
             <RulesModal open={showRules} closeModal={() => setShowRules(false)} />
             <SettingsModal open={showSettings} closeModal={() => setShowSettings(false)} />
           </Box>
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton size="large" edge="end" aria-label="mobile menu" aria-haspopup="true" onClick={handleMobileMenuOpen} color="inherit">
+          <Box sx={{ display: { xs: 'flex', sm: 'none', md: 'none' } }}>
+            <IconButton aria-label="mobile menu" color="inherit" size="large" aria-haspopup="true" onClick={handleMobileMenuOpen}>
               <MoreIcon />
             </IconButton>
           </Box>
