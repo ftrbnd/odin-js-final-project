@@ -39,13 +39,16 @@ const Game: FC = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
 
-  const [guesses, setGuesses] = useState<Song[]>(initialGuessState);
-  const guessCount = useRef<number>(0);
   const [dailySong, setDailySong] = useState<Song>({
     name: '',
     link: '',
     cover: ''
   });
+  const [guesses, setGuesses] = useState<Song[]>(initialGuessState);
+  const guessCount = useRef<number>(0);
+  const shareText = useRef<string>(''); // 🟥🟧🟩
+  // use redux to store shareText
+  // opening stats doesn't require a finished game - if shareText == '' don't show the share button
 
   const [showRules, setShowRules] = useState(false);
   const [showStats, setShowStats] = useState(false);
@@ -187,5 +190,3 @@ const Game: FC = () => {
 };
 
 export default Game;
-
-// 🟥🟧🟩
