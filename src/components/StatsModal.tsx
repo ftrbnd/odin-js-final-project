@@ -54,7 +54,8 @@ const StatsModal: FC<IProps> = ({ open, closeModal }) => {
   };
 
   const handleShare = () => {
-    navigator.clipboard.writeText(shareText.text.join(''));
+    const shareable = shareText.text;
+    navigator.clipboard.writeText(`EDEN Heardle ${shareable.indexOf('🟩') + 1 === 0 ? 'X' : shareable.indexOf('🟩') + 1}/${shareable.length} ${shareable.join('')}`);
     setOpenSnackbar(true);
   };
 
