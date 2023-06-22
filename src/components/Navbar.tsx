@@ -14,13 +14,16 @@ import LinksDrawer from './LinksDrawer';
 import { Link } from 'react-router-dom';
 import SettingsModal from './SettingsModal';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import StatsModal from './StatsModal';
 
 interface IProps {
   showRules: boolean;
   setShowRules: React.Dispatch<React.SetStateAction<boolean>>;
+  showStats: boolean;
+  setShowStats: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Navbar: FC<IProps> = ({ showRules, setShowRules }) => {
+const Navbar: FC<IProps> = ({ showRules, setShowRules, showStats, setShowStats }) => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
 
@@ -59,11 +62,16 @@ const Navbar: FC<IProps> = ({ showRules, setShowRules }) => {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
-        <IconButton aria-label="stats" color="inherit" size="large">
+      <MenuItem
+        onClick={() => {
+          setShowStats(true);
+          handleMobileMenuClose();
+        }}
+      >
+        <IconButton aria-label="statistics" color="inherit" size="large">
           <ShowChartOutlinedIcon />
         </IconButton>
-        <p>Stats</p>
+        <p>Statistics</p>
       </MenuItem>
       <MenuItem>
         <IconButton aria-label="leaderboard" color="inherit" size="large">
@@ -116,7 +124,7 @@ const Navbar: FC<IProps> = ({ showRules, setShowRules }) => {
           </Link>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', sm: 'flex', md: 'flex' } }}>
-            <IconButton aria-label="stats" color="inherit" size="large">
+            <IconButton aria-label="statistics" color="inherit" size="large" onClick={() => setShowStats(true)}>
               <ShowChartOutlinedIcon />
             </IconButton>
             <IconButton aria-label="leaderboard" color="inherit" size="large">
@@ -133,6 +141,7 @@ const Navbar: FC<IProps> = ({ showRules, setShowRules }) => {
             </IconButton>
             <RulesModal open={showRules} closeModal={() => setShowRules(false)} />
             <SettingsModal open={showSettings} closeModal={() => setShowSettings(false)} />
+            <StatsModal open={showStats} closeModal={() => setShowStats(false)} />
           </Box>
           <Box sx={{ display: { xs: 'flex', sm: 'none', md: 'none' } }}>
             <IconButton aria-label="mobile menu" color="inherit" size="large" aria-haspopup="true" onClick={handleMobileMenuOpen}>

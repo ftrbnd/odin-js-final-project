@@ -48,6 +48,7 @@ const Game: FC = () => {
   });
 
   const [showRules, setShowRules] = useState(false);
+  const [showStats, setShowStats] = useState(false);
 
   useEffect(() => {
     // if today is same day as song's day, set it to state
@@ -130,6 +131,7 @@ const Game: FC = () => {
     if (song.name === dailySong.name) {
       song.correct = 'CORRECT';
       guessCount.current = GUESS_LIMIT;
+      setShowStats(true);
     } else if (song.album === dailySong.album) {
       song.correct = 'ALBUM';
     } else {
@@ -157,7 +159,7 @@ const Game: FC = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100vh' }}>
-      <Navbar showRules={showRules} setShowRules={setShowRules} />
+      <Navbar showRules={showRules} setShowRules={setShowRules} showStats={showStats} setShowStats={setShowStats} />
       <Snackbar open={showSnackbar} autoHideDuration={3000} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         <Alert severity="success" onClose={handleSnackbarClose} variant="filled">
           {snackbarMessage}
