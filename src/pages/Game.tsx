@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Alert, Autocomplete, Box, CircularProgress, Snackbar, TextField } from '@mui/material';
+import { Alert, Autocomplete, Box, Snackbar, TextField } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
@@ -33,9 +33,7 @@ const Game: FC = () => {
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
-  const [openAutocomplete, setOpenAutocomplete] = useState<boolean>(false);
   const [options, setOptions] = useState<readonly Song[]>([]);
-  const loading = openAutocomplete && options.length === 0;
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -76,7 +74,25 @@ const Game: FC = () => {
       }
     }
 
+    async function fetchSongs() {
+      const songs: Song[] = [];
+      console.log('Fetching songs...');
+
+      const querySnapshot = await getDocs(collection(db, 'songs'));
+      querySnapshot.forEach((doc) => {
+        songs.push({
+          name: doc.id,
+          link: doc.data().link,
+          cover: doc.data().cover,
+          album: doc.data().album
+        });
+      });
+
+      return songs;
+    }
+
     fetchDailySong();
+    fetchSongs().then((songs) => setOptions(songs));
   }, []);
 
   useEffect(() => {
@@ -98,50 +114,7 @@ const Game: FC = () => {
     }
   }, [location.pathname, location.state, navigate, user.profile.username]);
 
-  useEffect(() => {
-    let active = true;
-
-    if (!loading) {
-      return undefined;
-    }
-
-    async function fetchSongs() {
-      const songs: Song[] = [];
-      console.log('Fetching songs...');
-
-      const querySnapshot = await getDocs(collection(db, 'songs'));
-      querySnapshot.forEach((doc) => {
-        songs.push({
-          name: doc.id,
-          link: doc.data().link,
-          cover: doc.data().cover,
-          album: doc.data().album
-        });
-      });
-
-      return songs;
-    }
-
-    (async () => {
-      const songs = await fetchSongs();
-
-      if (active) {
-        setOptions(songs);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loading]);
-
-  useEffect(() => {
-    if (!openAutocomplete) {
-      setOptions([]);
-    }
-  }, [openAutocomplete]);
-
-  const handleClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
+  const handleSnackbarClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -190,8 +163,8 @@ const Game: FC = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100vh' }}>
       <Navbar showRules={showRules} setShowRules={setShowRules} />
-      <Snackbar open={showSnackbar} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity="success" onClose={handleClose} variant="filled">
+      <Snackbar open={showSnackbar} autoHideDuration={3000} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert severity="success" onClose={handleSnackbarClose} variant="filled">
           {snackbarMessage}
         </Alert>
       </Snackbar>
@@ -204,30 +177,12 @@ const Game: FC = () => {
         <Autocomplete
           id="song-options"
           sx={{ width: '100%', padding: '1rem', justifySelf: 'center' }}
-          open={openAutocomplete}
-          onOpen={() => setOpenAutocomplete(true)}
           onChange={(_event, value) => handleAutocompleteChange(value)}
-          onClose={() => setOpenAutocomplete(false)}
           isOptionEqualToValue={(option: Song, value: Song) => option.name === value.name}
           getOptionLabel={(option: Song) => option.name}
           options={options}
           getOptionDisabled={(option) => guesses.some((song) => song.name === option.name) || guessCount.current === GUESS_LIMIT}
-          loading={loading}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Choose a song"
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <>
-                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                    {params.InputProps.endAdornment}
-                  </>
-                )
-              }}
-            />
-          )}
+          renderInput={(params) => <TextField {...params} label="Choose a song" />}
         />
       </Box>
     </Box>
