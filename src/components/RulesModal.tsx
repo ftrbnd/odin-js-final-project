@@ -66,7 +66,10 @@ const RulesModal: FC<IProps> = ({ open, closeModal }) => {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <Divider />
               <Typography variant="body1">
-                <Link to="/auth">Log in or create an account</Link> to link your stats.
+                <Link to="/auth" style={{ color: 'inherit' }}>
+                  Log in or create an account
+                </Link>{' '}
+                to link your stats.
               </Typography>
               <Divider />
             </Box>
