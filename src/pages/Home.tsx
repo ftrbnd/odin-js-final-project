@@ -1,9 +1,12 @@
 import { FC } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { auth } from '../utils/firebase';
+import { useSelector } from 'react-redux';
+import { RootState } from '../app/store';
 
 const Home: FC = () => {
+  const user = useSelector((state: RootState) => state.user);
+
   return (
     <Stack justifyContent="center" alignItems="center" height="100vh" spacing={3} padding="2rem">
       <Typography variant="h2" align="center" fontWeight="bold">
@@ -13,7 +16,7 @@ const Home: FC = () => {
         Get 6 chances to guess an EDEN song.
       </Typography>
       <Stack direction="row" alignItems="center" spacing={2}>
-        {!auth.currentUser ? (
+        {user.isLoading ? (
           <>
             {' '}
             <Link to="/play" state={'SHOW_RULES'}>
@@ -24,7 +27,7 @@ const Home: FC = () => {
             </Link>
           </>
         ) : (
-          <Typography variant="h6">Welcome back, {auth.currentUser?.displayName}</Typography>
+          <Typography variant="h6">Welcome back, {user.profile.username}</Typography>
         )}
         <Link to="/play">
           <Button variant="contained">Play</Button>

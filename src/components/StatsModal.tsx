@@ -27,6 +27,7 @@ const Transition = forwardRef(function Transition(
 });
 
 const StatsModal: FC<IProps> = ({ open, closeModal }) => {
+  const user = useSelector((state: RootState) => state.user);
   const shareText = useSelector((state: RootState) => state.shareText);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
@@ -60,7 +61,7 @@ const StatsModal: FC<IProps> = ({ open, closeModal }) => {
   return (
     <div>
       <Dialog fullWidth open={open} TransitionComponent={Transition} keepMounted onClose={closeModal} aria-describedby="alert-dialog-slide-description">
-        <DialogTitle>Statistics</DialogTitle>
+        <DialogTitle>Statistics{!user.isLoading && ` | ${user.profile.username}`}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <Stack sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', justifyItems: 'center', alignItems: 'center', gap: '1rem' }}>
             {[Statistic.Played, Statistic.WinPercentage, Statistic.CurrentStreak, Statistic.MaxStreak].map((statistic) => (
