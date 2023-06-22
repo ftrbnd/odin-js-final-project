@@ -1,4 +1,4 @@
-import { Box, Card, IconButton, LinearProgress, LinearProgressProps, Typography } from '@mui/material';
+import { Box, Card, CircularProgress, IconButton, LinearProgress, LinearProgressProps, Typography } from '@mui/material';
 import { FC, useRef, useState } from 'react';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -39,11 +39,13 @@ const LinearProgressWithLabel = (props: LinearProgressProps & { currentSecond: n
 
 const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, isPlaying, togglePlaying }) => {
   const playerRef = useRef<ReactPlayer>(null);
+  const [playerReady, setPlayerReady] = useState<boolean>(false);
   const [curSecond, setCurSecond] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
 
   const handleReady = () => {
     console.log('Player ready!');
+    setPlayerReady(true);
     playerRef.current?.seekTo(start);
   };
 
@@ -80,9 +82,15 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
     <Card elevation={12} sx={{ display: 'grid', gridTemplateColumns: '1fr', justifyItems: 'center', padding: '8px', margin: '16px' }}>
       <LinearProgressWithLabel currentSecond={curSecond} finalSecond={totalDuration} progress={progress} />
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <IconButton aria-label="play/pause" onClick={togglePlaying}>
-          {isPlaying ? <PauseIcon sx={{ height: 38, width: 38 }} /> : <PlayArrowIcon sx={{ height: 38, width: 38 }} />}
-        </IconButton>
+        {playerReady ? (
+          <IconButton aria-label="play/pause" onClick={togglePlaying}>
+            {isPlaying ? <PauseIcon sx={{ height: 38, width: 38 }} /> : <PlayArrowIcon sx={{ height: 38, width: 38 }} />}
+          </IconButton>
+        ) : (
+          <Box sx={{ display: 'flex' }}>
+            <CircularProgress sx={{ height: 38, width: 38 }} />
+          </Box>
+        )}
         <ReactPlayer
           ref={playerRef}
           url={link}
