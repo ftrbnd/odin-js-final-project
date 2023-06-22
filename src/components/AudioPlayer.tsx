@@ -9,8 +9,6 @@ interface IProps {
   currentDuration: number;
   totalDuration: number;
   link: string;
-  isPlaying: boolean;
-  togglePlaying: () => void;
 }
 
 const formatTime = (seconds: number, minutes = 0) => {
@@ -37,7 +35,8 @@ const LinearProgressWithLabel = (props: LinearProgressProps & { currentSecond: n
   );
 };
 
-const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, isPlaying, togglePlaying }) => {
+const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link }) => {
+  const [playing, setPlaying] = useState(false);
   const playerRef = useRef<ReactPlayer>(null);
   const [playerReady, setPlayerReady] = useState<boolean>(false);
   const [curSecond, setCurSecond] = useState<number>(0);
@@ -52,6 +51,10 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
 
     setBuffer((currentDuration / totalDuration) * 100);
   }, [currentDuration, totalDuration]);
+
+  const togglePlaying = () => {
+    setPlaying((prev) => !prev);
+  };
 
   const handleReady = () => {
     console.log('Player ready!');
@@ -74,7 +77,7 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
   };
 
   const handleProgress = () => {
-    if (!playerRef.current || !isPlaying) return;
+    if (!playerRef.current || !playing) return;
 
     setCurSecond(getCurrentSecond());
     setProgress((getCurrentSecond() / totalDuration) * 100);
@@ -121,7 +124,7 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {playerReady ? (
           <IconButton aria-label="play/pause" onClick={togglePlaying}>
-            {isPlaying ? <PauseIcon sx={{ height: 38, width: 38 }} /> : <PlayArrowIcon sx={{ height: 38, width: 38 }} />}
+            {playing ? <PauseIcon sx={{ height: 38, width: 38 }} /> : <PlayArrowIcon sx={{ height: 38, width: 38 }} />}
           </IconButton>
         ) : (
           <Box sx={{ display: 'flex' }}>
@@ -131,7 +134,7 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
         <ReactPlayer
           ref={playerRef}
           url={link}
-          playing={isPlaying}
+          playing={playing}
           volume={0.5}
           style={{ display: 'none' }}
           progressInterval={200}

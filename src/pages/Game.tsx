@@ -41,7 +41,6 @@ const Game: FC = () => {
 
   const [guesses, setGuesses] = useState<Song[]>(initialGuessState);
   const guessCount = useRef<number>(0);
-  const [playing, setPlaying] = useState(false);
   const [dailySong, setDailySong] = useState<Song>({
     name: '',
     link: '',
@@ -156,10 +155,6 @@ const Game: FC = () => {
     });
   };
 
-  const togglePlaying = () => {
-    setPlaying((prev) => !prev);
-  };
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100vh' }}>
       <Navbar showRules={showRules} setShowRules={setShowRules} />
@@ -172,7 +167,7 @@ const Game: FC = () => {
       <ProgressRows guesses={guesses} limit={GUESS_LIMIT} />
 
       <Box sx={{ display: 'grid', gridTemplateRows: 'auto auto', alignItems: 'center' }}>
-        <AudioPlayer start={15} currentDuration={guessCount.current + 1} totalDuration={GUESS_LIMIT} link={dailySong.link} isPlaying={playing} togglePlaying={togglePlaying} />
+        <AudioPlayer start={15} currentDuration={guessCount.current + 1} totalDuration={GUESS_LIMIT} link={dailySong.link} />
 
         <Autocomplete
           id="song-options"
@@ -190,3 +185,5 @@ const Game: FC = () => {
 };
 
 export default Game;
+
+// 🟥🟧🟩
