@@ -8,7 +8,6 @@ import { FC, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import { SongCard } from './ProgressRows';
 import { Song } from '../pages/Game';
-import { auth } from '../utils/firebase';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 
