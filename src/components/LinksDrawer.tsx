@@ -32,7 +32,7 @@ const LinksDrawer: FC<IProps> = ({ open, toggleDrawer }) => {
       <Box sx={{ width: 250 }} role="presentation" onClick={() => toggleDrawer(false)} onKeyDown={() => toggleDrawer(false)}>
         <List>
           <ListItem key="discord">
-            <Link target="mynewtab" href="https://discord.gg/futurebound" underline="hover" variant="inherit" color="inherit">
+            <Link rel="noopener" target="mynewtab" href="https://discord.gg/futurebound" underline="hover" variant="inherit" color="inherit">
               <ListItemButton>
                 <ListItemIcon>
                   <FontAwesomeIcon icon={faDiscord} />
@@ -42,7 +42,7 @@ const LinksDrawer: FC<IProps> = ({ open, toggleDrawer }) => {
             </Link>
           </ListItem>
           <ListItem key="reddit">
-            <Link target="mynewtab" href="https://reddit.com/r/eden" underline="hover" variant="inherit" color="inherit">
+            <Link rel="noopener" target="mynewtab" href="https://reddit.com/r/eden" underline="hover" variant="inherit" color="inherit">
               <ListItemButton>
                 <ListItemIcon>
                   <RedditIcon />
@@ -52,7 +52,7 @@ const LinksDrawer: FC<IProps> = ({ open, toggleDrawer }) => {
             </Link>
           </ListItem>
           <ListItem key="youtube">
-            <Link target="mynewtab" href="https://www.youtube.com/c/iameden" underline="hover" variant="inherit" color="inherit">
+            <Link rel="noopener" target="mynewtab" href="https://www.youtube.com/c/iameden" underline="hover" variant="inherit" color="inherit">
               <ListItemButton>
                 <ListItemIcon>
                   <YouTubeIcon />
