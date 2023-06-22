@@ -1,4 +1,4 @@
-import { Button, DialogActions, Divider, List, ListItemText } from '@mui/material';
+import { Button, DialogActions, Divider, Link, List, ListItemText } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -39,11 +39,17 @@ const SettingsModal: FC<IProps> = ({ open, closeModal }) => {
         <DialogTitle>Settings</DialogTitle>
         <DialogContent>
           <List>
-            <ListItemText primary="Feedback" secondary="Email" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
+            <Link rel="noopener" target="mynewtab" href={`mailto:giosalas25@gmail.com?subject=EDEN Heardle Feedback`} underline="hover" variant="inherit" color="inherit">
+              <ListItemText primary="Feedback" secondary="Email" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
+            </Link>
             <Divider />
-            <ListItemText primary="Community" secondary="Discord" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
+            <Link rel="noopener" target="mynewtab" href="https://discord.gg/futurebound" underline="hover" variant="inherit" color="inherit">
+              <ListItemText primary="Community" secondary="Discord" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
+            </Link>
             <Divider />
-            <ListItemText primary="Questions?" secondary="FAQ" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
+            <Link rel="noopener" target="mynewtab" href="https://discordapp.com/users/201917777185865729" underline="hover" variant="inherit" color="inherit">
+              <ListItemText primary="Questions?" secondary="Direct Message" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
+            </Link>
             <Divider />
           </List>
           <div>© 2023 giosalad</div>
