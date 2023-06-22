@@ -2,12 +2,13 @@ import { FC, useEffect, useRef, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Alert, Autocomplete, Box, Snackbar, TextField } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { db } from '../utils/firebase';
 import ProgressRows from '../components/ProgressRows';
 import AudioPlayer from '../components/AudioPlayer';
+import { addSquare, setComplete } from '../features/shareTextSlice';
 
 export type CorrectStatus = 'CORRECT' | 'WRONG' | 'ALBUM';
 export interface Song {
@@ -46,7 +47,9 @@ const Game: FC = () => {
   });
   const [guesses, setGuesses] = useState<Song[]>(initialGuessState);
   const guessCount = useRef<number>(0);
-  // const shareText = useRef<string>(''); // 🟥🟧🟩
+
+  const shareText = useSelector((state: RootState) => state.shareText);
+  const dispatch = useDispatch();
   // use redux to store shareText
   // opening stats doesn't require a finished game - if shareText == '' don't show the share button
 
@@ -127,18 +130,27 @@ const Game: FC = () => {
 
   const handleAutocompleteChange = (song: Song | null) => {
     if (!song) return;
-    console.log('Chosen song: ', song?.name);
 
     guessCount.current++;
 
     if (song.name === dailySong.name) {
-      song.correct = 'CORRECT';
-      guessCount.current = GUESS_LIMIT;
-      setShowStats(true);
+      song.correct = 'CORRECT'; // sets song's card to check icon
+      guessCount.current = GUESS_LIMIT; // disable more autocomplete selections
+
+      dispatch(addSquare('🟩'));
+      dispatch(setComplete(true));
     } else if (song.album === dailySong.album) {
       song.correct = 'ALBUM';
+      dispatch(addSquare('🟧'));
     } else {
       song.correct = 'WRONG';
+      dispatch(addSquare('🟥'));
+    }
+
+    if (guessCount.current === GUESS_LIMIT) {
+      // game finished with no correct guess
+      dispatch(setComplete(true));
+      setShowStats(true); // pull up stats modal
     }
 
     setGuesses((prevGuesses) => {
