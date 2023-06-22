@@ -43,6 +43,7 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
   const [progress, setProgress] = useState<number>(0);
 
   const handleReady = () => {
+    console.log('Player ready!');
     playerRef.current?.seekTo(start);
   };
 
@@ -99,5 +100,3 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
 };
 
 export default AudioPlayer;
-
-/* <CardMedia component="img" sx={{ width: 35, height: 35 }} image={theme.palette.mode === 'dark' ? 'https://i.imgur.com/tjACJH3.png' : 'https://i.imgur.com/NwRNjlK.png'} alt="EDEN logo" />; */

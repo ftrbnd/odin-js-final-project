@@ -9,11 +9,13 @@ import { db } from '../utils/firebase';
 import ProgressRows from '../components/ProgressRows';
 import AudioPlayer from '../components/AudioPlayer';
 
+export type CorrectStatus = 'CORRECT' | 'WRONG' | 'ALBUM';
 export interface Song {
   name: string;
   link: string;
+  cover: string;
   album?: string;
-  correct?: boolean;
+  correct?: CorrectStatus;
 }
 
 const GUESS_LIMIT = 6;
@@ -21,6 +23,7 @@ const GUESS_LIMIT = 6;
 const emptySong: Song = {
   name: 'ㅤ',
   link: '',
+  cover: '',
   album: ''
 };
 
@@ -43,7 +46,8 @@ const Game: FC = () => {
   const [playing, setPlaying] = useState(false);
   const [dailySong, setDailySong] = useState<Song>({
     name: '',
-    link: ''
+    link: '',
+    cover: ''
   });
 
   const [showRules, setShowRules] = useState(false);
@@ -63,6 +67,7 @@ const Game: FC = () => {
         setDailySong({
           name: song.name,
           link: song.link,
+          cover: song.cover,
           album: song.album
         });
         console.log('Found daily song: ', song.name);
@@ -109,6 +114,7 @@ const Game: FC = () => {
         songs.push({
           name: doc.id,
           link: doc.data().link,
+          cover: doc.data().cover,
           album: doc.data().album
         });
       });
@@ -147,11 +153,16 @@ const Game: FC = () => {
     if (!song) return;
     console.log('Chosen song: ', song?.name);
 
-    //TODO: determine if song is correct
-    // - then show snackbar according to guess
-
     guessCount.current++;
-    song.correct = Math.random() === 0; // temporary until logic for daily song is implemented
+
+    if (song.name === dailySong.name) {
+      song.correct = 'CORRECT';
+      guessCount.current = GUESS_LIMIT;
+    } else if (song.album === dailySong.album) {
+      song.correct = 'ALBUM';
+    } else {
+      song.correct = 'WRONG';
+    }
 
     setGuesses((prevGuesses) => {
       const newGuesses = [];
