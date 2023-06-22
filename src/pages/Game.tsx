@@ -188,7 +188,7 @@ const Game: FC = () => {
       <ProgressRows guesses={guesses} limit={GUESS_LIMIT} />
 
       <Box sx={{ display: 'grid', gridTemplateRows: 'auto auto', alignItems: 'center' }}>
-        <AudioPlayer start={0} currentDuration={1} totalDuration={GUESS_LIMIT} link={dailySong.link} isPlaying={playing} togglePlaying={togglePlaying} />
+        <AudioPlayer start={15} currentDuration={4} totalDuration={GUESS_LIMIT} link={dailySong.link} isPlaying={playing} togglePlaying={togglePlaying} />
 
         <Autocomplete
           id="song-options"
