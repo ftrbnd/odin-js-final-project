@@ -9,6 +9,8 @@ import { Link } from 'react-router-dom';
 import { SongCard } from './ProgressRows';
 import { Song } from '../pages/Game';
 import { auth } from '../utils/firebase';
+import { useSelector } from 'react-redux';
+import { RootState } from '../app/store';
 
 interface IProps {
   open: boolean;
@@ -41,6 +43,8 @@ const anotherSong: Song = {
 };
 
 const RulesModal: FC<IProps> = ({ open, closeModal }) => {
+  const user = useSelector((state: RootState) => state.user);
+
   return (
     <div>
       <Dialog open={open} TransitionComponent={Transition} keepMounted onClose={closeModal} aria-describedby="alert-dialog-slide-description">
@@ -62,7 +66,7 @@ const RulesModal: FC<IProps> = ({ open, closeModal }) => {
               <Typography variant="body2">Circles shares the same album!</Typography>
             </ListItem>
           </List>
-          {!auth.currentUser && (
+          {user.isLoading && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <Divider />
               <Typography variant="body1">

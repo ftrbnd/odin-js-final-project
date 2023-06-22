@@ -9,6 +9,8 @@ import styles from '../styles/SettingsModal.module.scss';
 import { signOut } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../app/store';
 
 interface IProps {
   open: boolean;
@@ -25,6 +27,7 @@ const Transition = forwardRef(function Transition(
 });
 
 const SettingsModal: FC<IProps> = ({ open, closeModal }) => {
+  const user = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
 
   const logOut = async () => {
@@ -55,7 +58,7 @@ const SettingsModal: FC<IProps> = ({ open, closeModal }) => {
           <div>© 2023 giosalad</div>
         </DialogContent>
         <DialogActions>
-          {auth.currentUser ? (
+          {!user.isLoading ? (
             <Button autoFocus onClick={logOut}>
               Log Out
             </Button>

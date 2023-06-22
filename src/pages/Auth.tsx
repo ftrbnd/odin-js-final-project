@@ -16,7 +16,7 @@ const Auth: FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
+    if (!user.isLoading) {
       navigate('/play');
     } else {
       console.log('No user detected');
