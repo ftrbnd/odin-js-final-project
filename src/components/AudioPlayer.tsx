@@ -49,6 +49,12 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
     playerRef.current?.seekTo(start);
   };
 
+  const handlePlay = () => {
+    console.log('onPlay');
+
+    setPlayerReady(true);
+  };
+
   const handlePause = () => {
     if (!playerRef.current) return;
 
@@ -70,6 +76,27 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
       setCurSecond(0);
       setProgress(0);
     }
+  };
+
+  const handleSeek = () => {
+    console.log('onSeek');
+    setPlayerReady(true);
+  };
+
+  const handleError = () => {
+    console.log('onError');
+  };
+
+  const handleBuffer = () => {
+    console.log('Buffering...');
+
+    playerRef.current?.seekTo(start);
+  };
+
+  const handleBufferEnd = () => {
+    console.log('Buffering ended.');
+
+    setPlayerReady(true);
   };
 
   function getCurrentSecond(): number {
@@ -99,8 +126,13 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
           style={{ display: 'none' }}
           progressInterval={200}
           onReady={handleReady}
+          onPlay={handlePlay}
           onPause={handlePause}
           onProgress={handleProgress}
+          onSeek={handleSeek}
+          onError={handleError}
+          onBuffer={handleBuffer}
+          onBufferEnd={handleBufferEnd}
         />
       </Box>
     </Card>
