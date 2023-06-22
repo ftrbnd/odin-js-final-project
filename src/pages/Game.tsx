@@ -46,7 +46,7 @@ const Game: FC = () => {
   });
   const [guesses, setGuesses] = useState<Song[]>(initialGuessState);
   const guessCount = useRef<number>(0);
-  const shareText = useRef<string>(''); // 🟥🟧🟩
+  // const shareText = useRef<string>(''); // 🟥🟧🟩
   // use redux to store shareText
   // opening stats doesn't require a finished game - if shareText == '' don't show the share button
 
