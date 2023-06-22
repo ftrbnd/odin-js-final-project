@@ -1,4 +1,4 @@
-import { Divider, List, ListItemText, Typography } from '@mui/material';
+import { Divider, List, ListItem, ListItemText, Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -6,6 +6,8 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { FC, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
+import { SongCard } from './ProgressRows';
+import { Song } from '../pages/Game';
 
 interface IProps {
   open: boolean;
@@ -21,6 +23,22 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const sampleSong: Song = {
+  name: 'Gravity',
+  link: 'https://youtu.be/3ieHOFTd-hs',
+  cover: 'https://i1.sndcdn.com/artworks-000123341011-uyahoc-t500x500.jpg',
+  album: 'End Credits',
+  correct: 'WRONG'
+};
+
+const anotherSong: Song = {
+  name: 'Circles',
+  link: 'https://youtu.be/fP8ElyrwtEc',
+  cover: 'https://i1.sndcdn.com/artworks-000177424141-vs8frr-t500x500.jpg',
+  album: 'i think you think too much of me',
+  correct: 'ALBUM'
+};
+
 const RulesModal: FC<IProps> = ({ open, closeModal }) => {
   return (
     <div>
@@ -33,7 +51,16 @@ const RulesModal: FC<IProps> = ({ open, closeModal }) => {
             <ListItemText>• The color of the tiles will change if your guess belongs to the same album.</ListItemText>
           </List>
           <Typography variant="h6">Examples</Typography>
-          <List>TODO: Add visual examples</List>
+          <List>
+            <ListItem sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <SongCard song={sampleSong} />
+              <Typography variant="body1">Gravity does not share the same album.</Typography>
+            </ListItem>
+            <ListItem sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <SongCard song={anotherSong} />
+              <Typography variant="body1">Circles shares the same album!</Typography>
+            </ListItem>
+          </List>
           <Divider />
           <Typography variant="body1">
             <Link to="/auth">Log in or create an account</Link> to link your stats.

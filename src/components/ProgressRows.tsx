@@ -21,21 +21,28 @@ const guessStatusIcon = (status: CorrectStatus | undefined) => {
   }
 };
 
+interface CardProps {
+  children?: React.ReactNode;
+  song: Song;
+}
+
+export const SongCard: FC<CardProps> = ({ song }) => {
+  return (
+    <Card elevation={6} sx={{ minWidth: 350, display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '1rem', justifyItems: 'center', alignItems: 'center', padding: '1rem' }}>
+      {song.cover ? <CardMedia component="img" sx={{ width: 50, height: 50 }} image={song.cover} alt="EDEN logo" /> : <Box sx={{ width: 50, height: 50 }}></Box>}
+      <Typography variant="subtitle1" sx={{ textAlign: 'center' }} fontSize="1rem" fontWeight={'bold'}>
+        {song.name}
+      </Typography>
+      {guessStatusIcon(song.correct)}
+    </Card>
+  );
+};
+
 const ProgressRows: FC<IProps> = ({ guesses, limit }) => {
   return (
     <Box sx={{ alignSelf: 'center', padding: '1rem', display: 'grid', gridTemplateRows: `repeat(${limit}, 1fr)`, justifyItems: 'center', alignItems: 'center', gap: '1rem' }}>
       {guesses.map((song, index) => (
-        <Card
-          key={`${song.name}-${index}`}
-          elevation={6}
-          sx={{ minWidth: 350, display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '1rem', justifyItems: 'center', alignItems: 'center', padding: '1rem' }}
-        >
-          {song.cover ? <CardMedia component="img" sx={{ width: 50, height: 50 }} image={song.cover} alt="EDEN logo" /> : <Box sx={{ width: 50, height: 50 }}></Box>}
-          <Typography variant="subtitle1" sx={{ textAlign: 'center' }} fontSize="1rem" fontWeight={'bold'}>
-            {song.name}
-          </Typography>
-          {guessStatusIcon(song.correct)}
-        </Card>
+        <SongCard key={`${song.name}-${index}`} song={song} />
       ))}
     </Box>
   );
