@@ -1,5 +1,5 @@
 import { Box, Card, CircularProgress, IconButton, LinearProgress, LinearProgressProps, Typography } from '@mui/material';
-import { FC, useRef, useState } from 'react';
+import { FC, useRef, useState, useEffect } from 'react';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import ReactPlayer from 'react-player/youtube';
@@ -17,7 +17,7 @@ const formatTime = (seconds: number, minutes = 0) => {
   return `${String(minutes).padStart(2, '0')}:${String(seconds)[0].padStart(2, '0')}`;
 };
 
-const LinearProgressWithLabel = (props: LinearProgressProps & { currentSecond: number; finalSecond: number; progress: number }) => {
+const LinearProgressWithLabel = (props: LinearProgressProps & { currentSecond: number; finalSecond: number; progress: number; buffer: number }) => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
       <Box sx={{ minWidth: 35 }}>
@@ -26,7 +26,7 @@ const LinearProgressWithLabel = (props: LinearProgressProps & { currentSecond: n
         </Typography>
       </Box>
       <Box sx={{ width: '100%', mr: 1, ml: 1 }}>
-        <LinearProgress variant="determinate" value={props.progress} />
+        <LinearProgress variant="buffer" value={props.progress} valueBuffer={props.buffer} />
       </Box>
       <Box sx={{ minWidth: 35 }}>
         <Typography variant="body2" color="text.secondary">
@@ -42,6 +42,16 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
   const [playerReady, setPlayerReady] = useState<boolean>(false);
   const [curSecond, setCurSecond] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
+  const [buffer, setBuffer] = useState((currentDuration / totalDuration) * 100);
+
+  useEffect(() => {
+    if (currentDuration - 1 === totalDuration) {
+      setBuffer(100);
+      setProgress(100);
+    }
+
+    setBuffer((currentDuration / totalDuration) * 100);
+  }, [currentDuration, totalDuration]);
 
   const handleReady = () => {
     console.log('Player ready!');
@@ -107,7 +117,7 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link, 
 
   return (
     <Card elevation={12} sx={{ display: 'grid', gridTemplateColumns: '1fr', justifyItems: 'center', padding: '8px', margin: '16px' }}>
-      <LinearProgressWithLabel currentSecond={curSecond} finalSecond={totalDuration} progress={progress} />
+      <LinearProgressWithLabel currentSecond={curSecond} finalSecond={totalDuration} progress={progress} buffer={buffer} />
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {playerReady ? (
           <IconButton aria-label="play/pause" onClick={togglePlaying}>
