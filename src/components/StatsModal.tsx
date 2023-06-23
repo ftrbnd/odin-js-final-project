@@ -1,9 +1,10 @@
-import { Button, Dialog, DialogContent, DialogTitle, Divider, Slide, Snackbar, Stack, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogContent, DialogTitle, Divider, Link, Slide, Snackbar, Stack, Typography } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 import { FC, forwardRef, useState } from 'react';
 import ShareIcon from '@mui/icons-material/Share';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
+import { NavLink } from 'react-router-dom';
 
 interface IProps {
   open: boolean;
@@ -28,21 +29,23 @@ const Transition = forwardRef(function Transition(
 
 const StatsModal: FC<IProps> = ({ open, closeModal }) => {
   const user = useSelector((state: RootState) => state.user);
+
   const shareText = useSelector((state: RootState) => state.shareText);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const getStat = (field: string) => {
+    if (user.isLoading) return 0;
+
     switch (field) {
       case Statistic.Played:
-        break;
+        return 1;
       case Statistic.WinPercentage:
-        break;
+        return 1;
       case Statistic.CurrentStreak:
-        break;
+        return 1;
       case Statistic.MaxStreak:
-        break;
+        return 1;
     }
-    return 1; // temporary
   };
 
   const handleClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
@@ -76,7 +79,18 @@ const StatsModal: FC<IProps> = ({ open, closeModal }) => {
               </Stack>
             ))}
           </Stack>
-          <Divider />
+          {user.isLoading && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Divider />
+              <Typography variant="body1">
+                <NavLink to="/auth" style={{ color: 'inherit' }}>
+                  Log in or create an account
+                </NavLink>{' '}
+                to link your stats.
+              </Typography>
+              <Divider />
+            </Box>
+          )}
           <Stack direction="column" alignItems="center" gap="1rem">
             {shareText.complete && <Typography variant="body1">{shareText.text}</Typography>}
             <Button disabled={!shareText.complete} variant="contained" endIcon={<ShareIcon />} onClick={handleShare}>
