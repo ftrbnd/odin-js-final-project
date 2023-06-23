@@ -55,16 +55,20 @@ const RulesModal: FC<IProps> = ({ open, closeModal }) => {
             <ListItemText>• The color of the tiles will change if your guess belongs to the same album.</ListItemText>
           </List>
           <Typography variant="h6">Examples</Typography>
-          <List>
-            <ListItem sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <Box sx={{ display: 'grid', gridTemplateRows: '1fr 1fr', gridTemplateColumns: '1fr', padding: '8px' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', justifyContent: 'stretch' }}>
               <SongCard song={sampleSong} />
-              <Typography variant="body2">Gravity does not share the same album.</Typography>
-            </ListItem>
-            <ListItem sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Typography variant="body2" textAlign="center">
+                Gravity does not share the same album.
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
               <SongCard song={anotherSong} />
-              <Typography variant="body2">Circles shares the same album!</Typography>
-            </ListItem>
-          </List>
+              <Typography variant="body2" textAlign="center">
+                Circles shares the same album!
+              </Typography>
+            </Box>
+          </Box>
           {user.isLoading && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <Divider />

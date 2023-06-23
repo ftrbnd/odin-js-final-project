@@ -11,11 +11,11 @@ interface IProps {
 const guessStatusIcon = (status: CorrectStatus | undefined) => {
   switch (status) {
     case 'WRONG':
-      return <ClearIcon sx={{ height: 50, width: 50 }} color="error" />;
+      return <ClearIcon sx={{ height: { xs: 25, sm: 50 }, width: { xs: 25, sm: 50 } }} color="error" />;
     case 'ALBUM':
-      return <ClearIcon sx={{ height: 50, width: 50 }} color="warning" />;
+      return <ClearIcon sx={{ height: { xs: 25, sm: 50 }, width: { xs: 25, sm: 50 } }} color="warning" />;
     case 'CORRECT':
-      return <CheckIcon sx={{ height: 50, width: 50 }} color="success" />;
+      return <CheckIcon sx={{ height: { xs: 25, sm: 50 }, width: { xs: 25, sm: 50 } }} color="success" />;
     default:
       return <></>;
   }
@@ -28,9 +28,16 @@ interface CardProps {
 
 export const SongCard: FC<CardProps> = ({ song }) => {
   return (
-    <Card elevation={6} sx={{ minWidth: 350, display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '1rem', justifyItems: 'center', alignItems: 'center', padding: '1rem' }}>
-      {song.cover ? <CardMedia component="img" sx={{ width: 50, height: 50 }} image={song.cover} alt="EDEN logo" /> : <Box sx={{ width: 50, height: 50 }}></Box>}
-      <Typography variant="subtitle1" sx={{ textAlign: 'center' }} fontSize="1rem" fontWeight={'bold'}>
+    <Card
+      elevation={6}
+      sx={{ minWidth: { sx: 250, sm: 350 }, display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '1rem', justifyItems: 'center', alignItems: 'center', padding: { xs: '8px', sm: '1rem' } }}
+    >
+      {song.cover ? (
+        <CardMedia component="img" sx={{ width: { xs: 25, sm: 50 }, height: { xs: 25, sm: 50 } }} image={song.cover} alt="EDEN logo" />
+      ) : (
+        <Box sx={{ width: { xs: 25, sm: 50 }, height: { xs: 25, sm: 50 } }}></Box>
+      )}
+      <Typography variant="subtitle1" sx={{ textAlign: 'center' }} fontWeight={'bold'}>
         {song.name}
       </Typography>
       {guessStatusIcon(song.correct)}
