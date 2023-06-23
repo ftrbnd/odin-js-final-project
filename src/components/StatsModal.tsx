@@ -66,7 +66,7 @@ const StatsModal: FC<IProps> = ({ open, closeModal }) => {
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <Stack sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', justifyItems: 'center', alignItems: 'center', gap: '1rem' }}>
             {[Statistic.Played, Statistic.WinPercentage, Statistic.CurrentStreak, Statistic.MaxStreak].map((statistic) => (
-              <Stack key={statistic} sx={{ display: 'grid', gridTemplateRows: 'auto auto' }}>
+              <Stack key={statistic} sx={{ display: 'grid', gridTemplateRows: '1fr 1fr', justifyItems: 'center', width: '100%', height: '100%' }}>
                 <Typography variant="h4" textAlign="center">
                   {getStat(statistic)}
                 </Typography>
