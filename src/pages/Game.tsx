@@ -17,6 +17,7 @@ export interface Song {
   cover: string;
   album?: string;
   correct?: CorrectStatus;
+  start?: number;
 }
 
 const GUESS_LIMIT = 6;
@@ -72,7 +73,8 @@ const Game: FC = () => {
           name: song.name,
           link: song.link,
           cover: song.cover,
-          album: song.album
+          album: song.album,
+          start: song.start
         });
         console.log('Found daily song: ', song.name);
       } else {
@@ -184,7 +186,7 @@ const Game: FC = () => {
       <ProgressRows guesses={guesses} limit={GUESS_LIMIT} />
 
       <Box sx={{ display: 'grid', gridTemplateRows: 'auto auto', alignItems: 'center' }}>
-        <AudioPlayer start={15} currentDuration={guessCount.current + 1} totalDuration={GUESS_LIMIT} link={dailySong.link} />
+        <AudioPlayer start={dailySong.start || 0} currentDuration={guessCount.current + 1} totalDuration={GUESS_LIMIT} link={dailySong.link} />
 
         <Autocomplete
           id="song-options"
