@@ -5,7 +5,10 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LoginIcon from '@mui/icons-material/Login';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth } from '../utils/firebase';
+import { auth, db } from '../utils/firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { useDispatch } from 'react-redux';
+import { logIn } from '../features/userSlice';
 
 const isValidEmail = (email: string) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
 
@@ -22,6 +25,7 @@ const SignUp: FC = () => {
   const [formValid, setFormValid] = useState('');
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (e: MouseEvent<HTMLButtonElement>) => {
@@ -73,10 +77,29 @@ const SignUp: FC = () => {
 
     try {
       await createUserWithEmailAndPassword(auth, emailInput, passwordInput);
-      if (auth.currentUser)
-        updateProfile(auth.currentUser, {
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, {
           displayName: usernameInput
         });
+
+        dispatch(
+          logIn({
+            username: usernameInput,
+            avatar: auth.currentUser.photoURL || ''
+          })
+        );
+
+        await setDoc(doc(db, 'users', auth.currentUser?.uid), {
+          username: auth.currentUser.displayName,
+          stats: {
+            gamesPlayed: 0,
+            gamesWon: 0,
+            currentStreak: 0,
+            maxStreak: 0
+          }
+        });
+      }
+
       setFormValid('');
       navigate('/play', {
         state: 'SIGN_UP'
