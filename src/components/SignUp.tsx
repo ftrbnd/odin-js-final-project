@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, db } from '../utils/firebase';
 import { doc, setDoc } from 'firebase/firestore';
-import { useDispatch } from 'react-redux';
 import { emptyUser } from '../utils/types';
 
 const isValidEmail = (email: string) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
@@ -25,7 +24,6 @@ const SignUp: FC = () => {
   const [formValid, setFormValid] = useState('');
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (e: MouseEvent<HTMLButtonElement>) => {

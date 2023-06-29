@@ -7,8 +7,7 @@ import { auth, db } from '../utils/firebase';
 import ProgressRows from '../components/ProgressRows';
 import AudioPlayer from '../components/AudioPlayer';
 import { useGetUserQuery, useUpdateCompleteStatusMutation, useUpdateProgressMutation, useUpdateShareTextMutation } from '../features/apiSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../app/store';
+import { useDispatch } from 'react-redux';
 import { updateLocalComplete, updateLocalShareText } from '../features/localUserSlice';
 import { skipToken } from '@reduxjs/toolkit/dist/query';
 import { CorrectStatus, GUESS_LIMIT } from '../utils/types';
@@ -45,7 +44,6 @@ const Game: FC = () => {
   const [updateComplete] = useUpdateCompleteStatusMutation();
   const [updateProgress] = useUpdateProgressMutation();
 
-  const localUser = useSelector((state: RootState) => state.localUser);
   const dispatch = useDispatch();
 
   const [dailySong, setDailySong] = useState<Song>({
