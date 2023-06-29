@@ -7,6 +7,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { auth } from '../utils/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const Auth: FC = () => {
   const [checked, setChecked] = useState(false);
@@ -14,11 +15,13 @@ const Auth: FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (auth.currentUser) {
-      navigate('/play');
-    } else {
-      console.log('No user detected');
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && user.displayName) {
+        navigate('/play');
+      }
+    });
+
+    return unsubscribe;
   }, [navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
