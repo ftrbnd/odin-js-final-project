@@ -1,16 +1,18 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Alert, Autocomplete, Box, Snackbar, TextField } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../app/store';
+import { Alert, Autocomplete, Box, Snackbar, TextField, Typography } from '@mui/material';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
-import { db } from '../utils/firebase';
+import { auth, db } from '../utils/firebase';
 import ProgressRows from '../components/ProgressRows';
 import AudioPlayer from '../components/AudioPlayer';
-import { addSquare, setComplete } from '../features/shareTextSlice';
+import { useGetUserQuery, useUpdateCompleteStatusMutation, useUpdateProgressMutation, useUpdateShareTextMutation } from '../features/apiSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../app/store';
+import { updateLocalComplete, updateLocalShareText } from '../features/localUserSlice';
+import { skipToken } from '@reduxjs/toolkit/dist/query';
+import { CorrectStatus, GUESS_LIMIT } from '../utils/types';
 
-export type CorrectStatus = 'CORRECT' | 'WRONG' | 'ALBUM';
 export interface Song {
   name: string;
   link: string;
@@ -19,8 +21,6 @@ export interface Song {
   correct?: CorrectStatus;
   start?: number;
 }
-
-const GUESS_LIMIT = 6;
 
 const emptySong: Song = {
   name: 'ㅤ',
@@ -39,7 +39,14 @@ const Game: FC = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.user);
+
+  const { data: user } = useGetUserQuery(auth.currentUser?.uid ?? skipToken);
+  const [updateShareText] = useUpdateShareTextMutation();
+  const [updateComplete] = useUpdateCompleteStatusMutation();
+  const [updateProgress] = useUpdateProgressMutation();
+
+  const localUser = useSelector((state: RootState) => state.localUser);
+  const dispatch = useDispatch();
 
   const [dailySong, setDailySong] = useState<Song>({
     name: '',
@@ -49,18 +56,11 @@ const Game: FC = () => {
   const [guesses, setGuesses] = useState<Song[]>(initialGuessState);
   const guessCount = useRef<number>(0);
 
-  // const shareText = useSelector((state: RootState) => state.shareText);
-  const dispatch = useDispatch();
-  // use redux to store shareText
-  // opening stats doesn't require a finished game - if shareText == '' don't show the share button
-
   const [showRules, setShowRules] = useState(false);
   const [showStats, setShowStats] = useState(false);
 
   useEffect(() => {
-    // if today is same day as song's day, set it to state
-    // else if today is day after the song's date, choose a new one from collection/songs
-
+    // on mount: fetch daily song and song options
     async function fetchDailySong() {
       console.log('Fetching daily song...');
 
@@ -104,15 +104,21 @@ const Game: FC = () => {
   }, []);
 
   useEffect(() => {
+    if (auth.currentUser && user) {
+      if (user.daily.complete) setShowStats(true);
+    }
+  }, [user]);
+
+  useEffect(() => {
     switch (location.state) {
       case 'LOG_IN':
         setShowSnackbar(true);
-        setSnackbarMessage(`Welcome back ${user.profile.username}!`);
+        setSnackbarMessage(`Welcome back ${auth.currentUser?.displayName}!`);
         navigate(location.pathname, { replace: true });
         break;
       case 'SIGN_UP':
         setShowSnackbar(true);
-        setSnackbarMessage(`Welcome ${user.profile.username}!`);
+        setSnackbarMessage(`Welcome ${auth.currentUser?.displayName}!`);
         navigate(location.pathname, { replace: true });
         break;
       case 'SHOW_RULES':
@@ -120,7 +126,7 @@ const Game: FC = () => {
         navigate(location.pathname, { replace: true });
         break;
     }
-  }, [location.pathname, location.state, navigate, user.profile.username]);
+  }, [location.pathname, location.state, navigate, user, user?.profile.username]);
 
   const handleSnackbarClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
@@ -139,19 +145,39 @@ const Game: FC = () => {
       song.correct = 'CORRECT'; // sets song's card to check icon
       guessCount.current = GUESS_LIMIT; // disable more autocomplete selections
 
-      dispatch(addSquare('🟩'));
-      dispatch(setComplete(true));
+      if (auth.currentUser) {
+        updateShareText({ userId: auth.currentUser.uid, correctSquare: 'CORRECT' });
+        updateProgress({ userId: auth.currentUser.uid, song: song });
+      } else {
+        dispatch(updateLocalShareText('CORRECT'));
+      }
     } else if (song.album === dailySong.album) {
       song.correct = 'ALBUM';
-      dispatch(addSquare('🟧'));
+
+      if (auth.currentUser) {
+        updateShareText({ userId: auth.currentUser.uid, correctSquare: 'ALBUM' });
+        updateProgress({ userId: auth.currentUser.uid, song: song });
+      } else {
+        dispatch(updateLocalShareText('ALBUM'));
+      }
     } else {
       song.correct = 'WRONG';
-      dispatch(addSquare('🟥'));
+
+      if (auth.currentUser) {
+        updateShareText({ userId: auth.currentUser.uid, correctSquare: 'WRONG' });
+        updateProgress({ userId: auth.currentUser.uid, song: song });
+      } else {
+        dispatch(updateLocalShareText('WRONG'));
+      }
     }
 
     if (guessCount.current === GUESS_LIMIT) {
-      // game finished with no correct guess
-      dispatch(setComplete(true));
+      if (auth.currentUser) {
+        updateComplete({ userId: auth.currentUser.uid, complete: true });
+      } else {
+        dispatch(updateLocalComplete(true));
+      }
+
       setShowStats(true); // pull up stats modal
     }
 
@@ -183,10 +209,25 @@ const Game: FC = () => {
         </Alert>
       </Snackbar>
 
-      <ProgressRows guesses={guesses} limit={GUESS_LIMIT} />
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {auth.currentUser && user ? <ProgressRows guesses={user?.daily.progress || initialGuessState} limit={GUESS_LIMIT} /> : <ProgressRows guesses={guesses} limit={GUESS_LIMIT} />}
+
+        {auth.currentUser && user && user.daily.complete && (
+          <Typography variant="h6">
+            {user.daily.progress.at(-1)?.correct === 'CORRECT'
+              ? "Great job on today's puzzle! Check back tomorrow for a new song."
+              : "Thank you for completing today's EDEN Heardle! Try again tomorrow!"}
+          </Typography>
+        )}
+      </Box>
 
       <Box sx={{ display: 'grid', gridTemplateRows: 'auto auto', alignItems: 'center' }}>
-        <AudioPlayer start={dailySong.start || 0} currentDuration={guessCount.current + 1} totalDuration={GUESS_LIMIT} link={dailySong.link} />
+        <AudioPlayer
+          start={dailySong.start || 0}
+          currentDuration={auth.currentUser && user && user.daily.complete ? GUESS_LIMIT : guessCount.current + 1}
+          totalDuration={GUESS_LIMIT}
+          link={dailySong.link}
+        />
 
         <Autocomplete
           id="song-options"
@@ -195,7 +236,12 @@ const Game: FC = () => {
           isOptionEqualToValue={(option: Song, value: Song) => option.name === value.name}
           getOptionLabel={(option: Song) => option.name}
           options={options}
-          getOptionDisabled={(option) => guesses.some((song) => song.name === option.name) || guessCount.current === GUESS_LIMIT}
+          getOptionDisabled={(option) => {
+            if (auth.currentUser && user) {
+              return user.daily.complete;
+            }
+            return guesses.some((song) => song.name === option.name) || guessCount.current === GUESS_LIMIT;
+          }}
           renderInput={(params) => <TextField {...params} label="Choose a song" />}
         />
       </Box>

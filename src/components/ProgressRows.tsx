@@ -1,8 +1,9 @@
 import { FC } from 'react';
-import { CorrectStatus, Song } from '../pages/Game';
+import { Song } from '../pages/Game';
 import { Box, Card, CardMedia, Typography } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import CheckIcon from '@mui/icons-material/Check';
+import { CorrectStatus } from '../utils/types';
 interface IProps {
   guesses: Song[];
   limit: number;

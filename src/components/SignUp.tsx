@@ -8,7 +8,7 @@ import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, db } from '../utils/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { useDispatch } from 'react-redux';
-import { logIn } from '../features/userSlice';
+import { emptyUser } from '../utils/types';
 
 const isValidEmail = (email: string) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
 
@@ -82,20 +82,11 @@ const SignUp: FC = () => {
           displayName: usernameInput
         });
 
-        dispatch(
-          logIn({
-            username: usernameInput,
-            avatar: auth.currentUser.photoURL || ''
-          })
-        );
-
-        await setDoc(doc(db, 'users', auth.currentUser?.uid), {
-          username: auth.currentUser.displayName,
-          stats: {
-            gamesPlayed: 0,
-            gamesWon: 0,
-            currentStreak: 0,
-            maxStreak: 0
+        await setDoc(doc(db, 'users', auth.currentUser.uid), {
+          ...emptyUser,
+          profile: {
+            username: auth.currentUser.displayName,
+            avatar: auth.currentUser.photoURL
           }
         });
       }

@@ -1,8 +1,8 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import userReducer from '../features/userSlice';
-import shareTextReducer from '../features/shareTextSlice';
+import localUserReducer from '../features/localUserSlice';
+import { usersApi } from '../features/apiSlice';
 
 export const rootReducer = combineReducers({
-  user: userReducer,
-  shareText: shareTextReducer
+  localUser: localUserReducer,
+  [usersApi.reducerPath]: usersApi.reducer
 });

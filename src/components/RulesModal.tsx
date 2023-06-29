@@ -1,4 +1,4 @@
-import { Box, Divider, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Box, Divider, List, ListItemText, Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -8,8 +8,7 @@ import { FC, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import { SongCard } from './ProgressRows';
 import { Song } from '../pages/Game';
-import { useSelector } from 'react-redux';
-import { RootState } from '../app/store';
+import { auth } from '../utils/firebase';
 
 interface IProps {
   open: boolean;
@@ -42,8 +41,6 @@ const anotherSong: Song = {
 };
 
 const RulesModal: FC<IProps> = ({ open, closeModal }) => {
-  const user = useSelector((state: RootState) => state.user);
-
   return (
     <div>
       <Dialog open={open} TransitionComponent={Transition} keepMounted onClose={closeModal} aria-describedby="alert-dialog-slide-description">
@@ -69,7 +66,7 @@ const RulesModal: FC<IProps> = ({ open, closeModal }) => {
               </Typography>
             </Box>
           </Box>
-          {user.isLoading && (
+          {!auth.currentUser && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <Divider />
               <Typography variant="body1">

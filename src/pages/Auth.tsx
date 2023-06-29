@@ -6,22 +6,20 @@ import { Link, useNavigate } from 'react-router-dom';
 import GoogleIcon from '@mui/icons-material/Google';
 import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useSelector } from 'react-redux';
-import { RootState } from '../app/store';
+import { auth } from '../utils/firebase';
 
 const Auth: FC = () => {
   const [checked, setChecked] = useState(false);
 
-  const user = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user.isLoading) {
+    if (auth.currentUser) {
       navigate('/play');
     } else {
       console.log('No user detected');
     }
-  }, [user, navigate]);
+  }, [navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(e.target.checked);
