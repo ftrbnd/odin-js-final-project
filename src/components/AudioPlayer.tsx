@@ -3,7 +3,13 @@ import { FC, useRef, useState, useEffect } from 'react';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import ReactPlayer from 'react-player/youtube';
-
+import { GUESS_LIMIT } from '../utils/types';
+import LooksOneIcon from '@mui/icons-material/LooksOne';
+import LooksTwoIcon from '@mui/icons-material/LooksTwo';
+import Looks3Icon from '@mui/icons-material/Looks3';
+import Looks4Icon from '@mui/icons-material/Looks4';
+import Looks5Icon from '@mui/icons-material/Looks5';
+import Looks6Icon from '@mui/icons-material/Looks6';
 interface IProps {
   start: number;
   currentDuration: number;
@@ -120,6 +126,15 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link }
 
   return (
     <Card elevation={12} sx={{ display: 'grid', gridTemplateColumns: '1fr', justifyItems: 'center', padding: '8px', margin: '16px' }}>
+      <Box sx={{ width: '100%', display: 'grid', gridTemplateColumns: `repeat(${GUESS_LIMIT}, 1fr)`, justifyItems: 'center', gap: '1rem' }}>
+        <LooksOneIcon color={1 === currentDuration ? 'secondary' : 1 <= currentDuration ? 'primary' : 'disabled'} />
+        <LooksTwoIcon color={2 === currentDuration ? 'secondary' : 2 <= currentDuration ? 'primary' : 'disabled'} />
+        <Looks3Icon color={3 === currentDuration ? 'secondary' : 3 <= currentDuration ? 'primary' : 'disabled'} />
+        <Looks4Icon color={4 === currentDuration ? 'secondary' : 4 <= currentDuration ? 'primary' : 'disabled'} />
+        <Looks5Icon color={5 === currentDuration ? 'secondary' : 5 <= currentDuration ? 'primary' : 'disabled'} />
+        <Looks6Icon color={6 === currentDuration ? 'secondary' : 6 <= currentDuration ? 'primary' : 'disabled'} />
+      </Box>
+
       <LinearProgressWithLabel currentSecond={curSecond} finalSecond={totalDuration} progress={progress} buffer={buffer} />
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {playerReady ? (
