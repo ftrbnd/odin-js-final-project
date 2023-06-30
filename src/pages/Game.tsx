@@ -7,10 +7,12 @@ import { auth, db } from '../utils/firebase';
 import ProgressRows from '../components/ProgressRows';
 import AudioPlayer from '../components/AudioPlayer';
 import { useGetUserQuery, useUpdateCompleteStatusMutation, useUpdateProgressMutation, useUpdateShareTextMutation } from '../features/apiSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateLocalComplete, updateLocalShareText } from '../features/localUserSlice';
 import { skipToken } from '@reduxjs/toolkit/dist/query';
 import { CorrectStatus, GUESS_LIMIT } from '../utils/types';
+import { RootState } from '../app/store';
+import useCountdown from '../utils/useCountdown';
 
 export interface Song {
   name: string;
@@ -44,6 +46,8 @@ const Game: FC = () => {
   const [updateComplete] = useUpdateCompleteStatusMutation();
   const [updateProgress] = useUpdateProgressMutation();
 
+  const localUser = useSelector((state: RootState) => state.localUser);
+  const { hours, minutes, seconds } = useCountdown();
   const dispatch = useDispatch();
 
   const [dailySong, setDailySong] = useState<Song>({
@@ -173,6 +177,8 @@ const Game: FC = () => {
     if (guessCount.current === GUESS_LIMIT) {
       if (auth.currentUser) {
         updateComplete({ userId: auth.currentUser.uid, complete: true });
+
+        // TODO: Update stats on completion
       } else {
         dispatch(updateLocalComplete(true));
       }
@@ -216,6 +222,17 @@ const Game: FC = () => {
             {user.daily.progress.at(-1)?.correct === 'CORRECT'
               ? "Great job on today's puzzle! Check back tomorrow for a new song."
               : "Thank you for completing today's EDEN Heardle! Try again tomorrow!"}
+          </Typography>
+        )}
+        {localUser && localUser.daily.complete && (
+          <Typography variant="h6">
+            {localUser.daily.shareText.at(-1) === 'CORRECT' ? "Great job on today's puzzle! Check back tomorrow for a new song." : `The song was "${dailySong.name}", try again tomorrow!`}
+          </Typography>
+        )}
+
+        {(user?.daily.complete || localUser.daily.complete) && (
+          <Typography variant="subtitle1">
+            Next song in: {String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
           </Typography>
         )}
       </Box>
