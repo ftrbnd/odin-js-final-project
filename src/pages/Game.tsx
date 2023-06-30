@@ -86,9 +86,9 @@ const Game: FC = () => {
 
       const querySnapshot = await getDocs(collection(db, 'songs'));
       querySnapshot.forEach((doc) => {
-        const regex = /-/g; // for vertigo songs; ex. start//end stored in database as start--end
+        const regex = /--/g; // for vertigo songs; ex. start//end stored in database as start--end
         songs.push({
-          name: doc.id.replace(regex, '/'),
+          name: doc.id.replace(regex, '//'),
           link: doc.data().link,
           cover: doc.data().cover,
           album: doc.data().album
