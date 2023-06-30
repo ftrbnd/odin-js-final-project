@@ -237,7 +237,7 @@ const Game: FC = () => {
           options={options}
           getOptionDisabled={(option) => {
             if (auth.currentUser && user) {
-              return user.daily.complete;
+              return user.daily.progress.some((song) => song.name === option.name) || user.daily.complete;
             }
             return guesses.some((song) => song.name === option.name) || guessCount.current === GUESS_LIMIT;
           }}
