@@ -31,7 +31,16 @@ export const SongCard: FC<CardProps> = ({ song }) => {
   return (
     <Card
       elevation={6}
-      sx={{ minWidth: { sx: 250, sm: 350 }, display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '1rem', justifyItems: 'center', alignItems: 'center', padding: { xs: '8px', sm: '1rem' } }}
+      sx={{
+        width: '100%',
+        minWidth: { sx: 250, sm: 350 },
+        display: 'grid',
+        gridTemplateColumns: 'auto 1fr auto',
+        gap: '1rem',
+        justifyItems: 'center',
+        alignItems: 'center',
+        padding: { xs: '8px', sm: '1rem' }
+      }}
     >
       {song.cover ? (
         <CardMedia component="img" sx={{ width: { xs: 25, sm: 50 }, height: { xs: 25, sm: 50 } }} image={song.cover} alt="EDEN logo" />
