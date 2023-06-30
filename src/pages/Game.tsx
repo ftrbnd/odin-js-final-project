@@ -208,7 +208,7 @@ const Game: FC = () => {
         </Alert>
       </Snackbar>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '1rem' }}>
         {auth.currentUser && user ? <ProgressRows guesses={user?.daily.progress || initialGuessState} limit={GUESS_LIMIT} /> : <ProgressRows guesses={guesses} limit={GUESS_LIMIT} />}
 
         {auth.currentUser && user && user.daily.complete && (
