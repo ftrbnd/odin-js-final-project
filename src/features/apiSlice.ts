@@ -18,6 +18,11 @@ interface ProgressMutationQuery {
   song: Song;
 }
 
+interface StatisticMutationQuery {
+  userId: string;
+  gameWon: boolean;
+}
+
 export const usersApi = createApi({
   reducerPath: 'usersApi',
   baseQuery: fakeBaseQuery(),
@@ -31,8 +36,6 @@ export const usersApi = createApi({
           let userData: User;
           if (querySnapshot.exists()) {
             const data = querySnapshot.data();
-            console.log('Initial user snapshot: ', data);
-
             userData = {
               profile: {
                 username: data.profile.username,
@@ -56,7 +59,7 @@ export const usersApi = createApi({
 
           return { data: userData };
         } catch (error) {
-          console.log('error getting user data: ', userId);
+          console.error('Error getting user data: ', userId);
           return { error };
         }
       },
@@ -68,7 +71,6 @@ export const usersApi = createApi({
           const userRef = doc(db, 'users', userId);
           unsubscribe = onSnapshot(userRef, (doc) => {
             updateCachedData(() => {
-              console.log('New user snapshot: ', doc.data());
               return doc.data() as User;
             });
           });
@@ -149,8 +151,41 @@ export const usersApi = createApi({
         }
       },
       invalidatesTags: ['User']
+    }),
+    updateStats: builder.mutation<void, StatisticMutationQuery>({
+      async queryFn({ userId, gameWon }) {
+        try {
+          const response = await runTransaction(db, async (transaction) => {
+            const userDocRef = doc(db, 'users', userId);
+            const userDoc = await transaction.get(userDocRef);
+            if (!userDoc.exists()) {
+              throw 'Document does not exist!';
+            }
+
+            const oldStats = userDoc.data().statistics;
+
+            const newStats = {
+              gamesPlayed: oldStats.gamesPlayed + 1,
+              gamesWon: gameWon ? oldStats.gamesWon + 1 : oldStats.gamesWon,
+              currentStreak: gameWon ? oldStats.currentStreak + 1 : 0,
+              maxStreak: Math.max(oldStats.maxStreak, gameWon ? oldStats.currentStreak + 1 : 0)
+            };
+
+            transaction.update(userDocRef, {
+              statistics: newStats
+            });
+          });
+          console.log('Transaction successfully committed! [daily.statistics]');
+
+          return { data: response };
+        } catch (error) {
+          console.error("Error updating user's daily statistics!", error);
+          return { error };
+        }
+      },
+      invalidatesTags: ['User']
     })
   })
 });
 
-export const { useGetUserQuery, useUpdateShareTextMutation, useUpdateCompleteStatusMutation, useUpdateProgressMutation } = usersApi;
+export const { useGetUserQuery, useUpdateShareTextMutation, useUpdateCompleteStatusMutation, useUpdateProgressMutation, useUpdateStatsMutation } = usersApi;

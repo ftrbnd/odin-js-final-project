@@ -38,17 +38,17 @@ const StatsModal: FC<IProps> = ({ open, closeModal }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const getStat = (field: string) => {
-    if (isLoading) return 0;
+    if (isLoading || !user) return 0;
 
     switch (field) {
       case Statistic.Played:
-        return 1;
+        return user?.statistics.gamesPlayed;
       case Statistic.WinPercentage:
-        return 1;
+        return Math.round((user?.statistics.gamesWon / user?.statistics.gamesPlayed || 0) * 100);
       case Statistic.CurrentStreak:
-        return 1;
+        return user?.statistics.currentStreak;
       case Statistic.MaxStreak:
-        return 1;
+        return user?.statistics.maxStreak;
     }
   };
 

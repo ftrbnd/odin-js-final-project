@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Alert, Autocomplete, Box, Snackbar, TextField, Typography } from '@mui/material';
@@ -6,7 +6,7 @@ import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '../utils/firebase';
 import ProgressRows from '../components/ProgressRows';
 import AudioPlayer from '../components/AudioPlayer';
-import { useGetUserQuery, useUpdateCompleteStatusMutation, useUpdateProgressMutation, useUpdateShareTextMutation } from '../features/apiSlice';
+import { useGetUserQuery, useUpdateCompleteStatusMutation, useUpdateProgressMutation, useUpdateShareTextMutation, useUpdateStatsMutation } from '../features/apiSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateLocalComplete, updateLocalShareText } from '../features/localUserSlice';
 import { skipToken } from '@reduxjs/toolkit/dist/query';
@@ -45,6 +45,7 @@ const Game: FC = () => {
   const [updateShareText] = useUpdateShareTextMutation();
   const [updateComplete] = useUpdateCompleteStatusMutation();
   const [updateProgress] = useUpdateProgressMutation();
+  const [updateStats] = useUpdateStatsMutation();
 
   const localUser = useSelector((state: RootState) => state.localUser);
   const { hours, minutes, seconds } = useCountdown();
@@ -56,7 +57,7 @@ const Game: FC = () => {
     cover: ''
   });
   const [guesses, setGuesses] = useState<Song[]>(initialGuessState);
-  const guessCount = useRef<number>(0);
+  const [guessCount, setGuessCount] = useState<number>(0);
 
   const [showRules, setShowRules] = useState(false);
   const [showStats, setShowStats] = useState(false);
@@ -64,7 +65,7 @@ const Game: FC = () => {
   useEffect(() => {
     // on mount: fetch daily song and song options
     async function fetchDailySong() {
-      console.log('Fetching daily song...');
+      // console.log('Fetching daily song...');
 
       const docRef = doc(db, 'daily_song', 'song');
       const docSnap = await getDoc(docRef);
@@ -78,7 +79,7 @@ const Game: FC = () => {
           album: song.album,
           start: song.start
         });
-        console.log('Found daily song: ', song.name);
+        // console.log('Found daily song: ', song.name);
       } else {
         console.log('No daily song found in database!');
       }
@@ -86,7 +87,7 @@ const Game: FC = () => {
 
     async function fetchSongs() {
       const songs: Song[] = [];
-      console.log('Fetching songs...');
+      // console.log('Fetching songs...');
 
       const querySnapshot = await getDocs(collection(db, 'songs'));
       querySnapshot.forEach((doc) => {
@@ -95,7 +96,7 @@ const Game: FC = () => {
           name: doc.id.replace(regex, '//'),
           link: doc.data().link,
           cover: doc.data().cover,
-          album: doc.data().album
+          album: doc.data().album || ''
         });
       });
 
@@ -131,6 +132,19 @@ const Game: FC = () => {
     }
   }, [location.pathname, location.state, navigate, user, user?.profile.username]);
 
+  useEffect(() => {
+    if (guessCount === GUESS_LIMIT) {
+      if (auth.currentUser) {
+        updateComplete({ userId: auth.currentUser.uid, complete: true });
+        updateStats({ userId: auth.currentUser.uid, gameWon: localUser.daily.shareText.at(-1) === 'CORRECT' });
+      } else {
+        dispatch(updateLocalComplete(true));
+      }
+
+      setShowStats(true); // pull up stats modal
+    }
+  }, [guessCount]);
+
   const handleSnackbarClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
@@ -139,51 +153,36 @@ const Game: FC = () => {
     setShowSnackbar(false);
   };
 
-  const handleAutocompleteChange = (song: Song | null) => {
+  const handleAutocompleteChange = async (song: Song | null) => {
     if (!song) return;
 
-    guessCount.current++;
+    setGuessCount((prevCount) => prevCount + 1);
 
     if (song.name === dailySong.name) {
       song.correct = 'CORRECT'; // sets song's card to check icon
-      guessCount.current = GUESS_LIMIT; // disable more autocomplete selections
+      setGuessCount(GUESS_LIMIT); // disable more autocomplete selections
 
       if (auth.currentUser) {
         updateShareText({ userId: auth.currentUser.uid, correctSquare: 'CORRECT' });
         updateProgress({ userId: auth.currentUser.uid, song: song });
-      } else {
-        dispatch(updateLocalShareText('CORRECT'));
       }
-    } else if (song.album === dailySong.album) {
+      dispatch(updateLocalShareText('CORRECT'));
+    } else if (song.album && song.album === dailySong.album) {
       song.correct = 'ALBUM';
 
       if (auth.currentUser) {
         updateShareText({ userId: auth.currentUser.uid, correctSquare: 'ALBUM' });
         updateProgress({ userId: auth.currentUser.uid, song: song });
-      } else {
-        dispatch(updateLocalShareText('ALBUM'));
       }
+      dispatch(updateLocalShareText('ALBUM'));
     } else {
       song.correct = 'WRONG';
 
       if (auth.currentUser) {
         updateShareText({ userId: auth.currentUser.uid, correctSquare: 'WRONG' });
         updateProgress({ userId: auth.currentUser.uid, song: song });
-      } else {
-        dispatch(updateLocalShareText('WRONG'));
       }
-    }
-
-    if (guessCount.current === GUESS_LIMIT) {
-      if (auth.currentUser) {
-        updateComplete({ userId: auth.currentUser.uid, complete: true });
-
-        // TODO: Update stats on completion
-      } else {
-        dispatch(updateLocalComplete(true));
-      }
-
-      setShowStats(true); // pull up stats modal
+      dispatch(updateLocalShareText('WRONG'));
     }
 
     setGuesses((prevGuesses) => {
@@ -195,7 +194,7 @@ const Game: FC = () => {
         } else {
           // found the first empty song
           newGuesses.push(song);
-          const remainingGuesses = new Array(GUESS_LIMIT - guessCount.current).fill(emptySong);
+          const remainingGuesses = new Array(GUESS_LIMIT - guessCount).fill(emptySong);
           newGuesses.push(...remainingGuesses);
           break;
         }
@@ -219,14 +218,12 @@ const Game: FC = () => {
 
         {auth.currentUser && user && user.daily.complete && (
           <Typography variant="h6">
-            {user.daily.progress.at(-1)?.correct === 'CORRECT'
-              ? "Great job on today's puzzle! Check back tomorrow for a new song."
-              : "Thank you for completing today's EDEN Heardle! Try again tomorrow!"}
+            {user.daily.progress?.at(-1)?.correct === 'CORRECT' ? "Great job on today's puzzle! Check back tomorrow for a new song." : `The song was "${dailySong.name}", try again tomorrow!`}
           </Typography>
         )}
         {localUser && localUser.daily.complete && (
           <Typography variant="h6">
-            {localUser.daily.shareText.at(-1) === 'CORRECT' ? "Great job on today's puzzle! Check back tomorrow for a new song." : `The song was "${dailySong.name}", try again tomorrow!`}
+            {localUser.daily.shareText?.at(-1) === 'CORRECT' ? "Great job on today's puzzle! Check back tomorrow for a new song." : `The song was "${dailySong.name}", try again tomorrow!`}
           </Typography>
         )}
 
@@ -238,12 +235,7 @@ const Game: FC = () => {
       </Box>
 
       <Box sx={{ display: 'grid', gridTemplateRows: 'auto auto', alignItems: 'center' }}>
-        <AudioPlayer
-          start={dailySong.start || 0}
-          currentDuration={auth.currentUser && user && user.daily.complete ? GUESS_LIMIT : guessCount.current + 1}
-          totalDuration={GUESS_LIMIT}
-          link={dailySong.link}
-        />
+        <AudioPlayer start={dailySong.start || 0} currentDuration={auth.currentUser && user && user.daily.complete ? GUESS_LIMIT : guessCount + 1} totalDuration={GUESS_LIMIT} link={dailySong.link} />
 
         <Autocomplete
           id="song-options"
@@ -254,9 +246,9 @@ const Game: FC = () => {
           options={options}
           getOptionDisabled={(option) => {
             if (auth.currentUser && user) {
-              return user.daily.progress.some((song) => song.name === option.name) || user.daily.complete;
+              return user.daily.progress?.some((song) => song.name === option.name) || user.daily.complete;
             }
-            return guesses.some((song) => song.name === option.name) || guessCount.current === GUESS_LIMIT;
+            return guesses.some((song) => song.name === option.name) || guessCount === GUESS_LIMIT;
           }}
           renderInput={(params) => <TextField {...params} label="Choose a song" />}
         />
