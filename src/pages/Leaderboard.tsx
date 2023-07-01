@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { AppBar, Box, Container, Stack, Tab, Tabs, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, CircularProgress, Container, Stack, Tab, Tabs, Toolbar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../utils/firebase';
@@ -47,6 +47,7 @@ const Leaderboard: FC = () => {
   const [dailyScores, setDailyScores] = useState<DailyScore[]>([]);
   const [winPercentages, setWinPercentages] = useState<WinPercentage[]>([]);
   const [tabValue, setTabValue] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -73,6 +74,7 @@ const Leaderboard: FC = () => {
     fetchStats().then((stats) => {
       setDailyScores(stats.dailies.sort((a, b) => a.shareText.indexOf('CORRECT') - b.shareText.indexOf('CORRECT')));
       setWinPercentages(stats.percentages.sort((a, b) => b.percentage - a.percentage));
+      setIsLoading(false);
     });
   }, []);
 
@@ -97,30 +99,42 @@ const Leaderboard: FC = () => {
         </Box>
         <TabPanel value={tabValue} index={0}>
           <Container>
-            {dailyScores.map((score, index) => (
-              <Box key={`${score.username}-daily`} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="h6" component="span">
-                  {`${index + 1}. ${score.username}`}
-                </Typography>
-                <Typography variant="body1" component="span">
-                  {convertShareText(score.shareText)}
-                </Typography>
+            {isLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <CircularProgress />
               </Box>
-            ))}
+            ) : (
+              dailyScores.map((score, index) => (
+                <Box key={`${score.username}-daily`} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="h6" component="span">
+                    {`${index + 1}. ${score.username}`}
+                  </Typography>
+                  <Typography variant="body1" component="span">
+                    {convertShareText(score.shareText)}
+                  </Typography>
+                </Box>
+              ))
+            )}
           </Container>
         </TabPanel>
         <TabPanel value={tabValue} index={1}>
           <Container>
-            {winPercentages.map((percentage, index) => (
-              <Box key={`${percentage.username}-percentage`} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="h6" component="span">
-                  {`${index + 1}. ${percentage.username}`}
-                </Typography>
-                <Typography variant="body2" component="span">
-                  {percentage.percentage}
-                </Typography>
+            {isLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <CircularProgress />
               </Box>
-            ))}
+            ) : (
+              winPercentages.map((percentage, index) => (
+                <Box key={`${percentage.username}-percentage`} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="h6" component="span">
+                    {`${index + 1}. ${percentage.username}`}
+                  </Typography>
+                  <Typography variant="body2" component="span">
+                    {percentage.percentage}
+                  </Typography>
+                </Box>
+              ))
+            )}
           </Container>
         </TabPanel>
       </Box>
