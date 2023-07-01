@@ -127,9 +127,11 @@ const Navbar: FC<IProps> = ({ showRules, setShowRules, showStats, setShowStats }
             <IconButton aria-label="statistics" color="inherit" size="large" onClick={() => setShowStats(true)}>
               <ShowChartOutlinedIcon />
             </IconButton>
-            <IconButton aria-label="leaderboard" color="inherit" size="large">
-              <LeaderboardOutlinedIcon />
-            </IconButton>
+            <Link to="/leaderboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <IconButton aria-label="leaderboard" color="inherit" size="large">
+                <LeaderboardOutlinedIcon />
+              </IconButton>
+            </Link>
             <IconButton aria-label="rules" color="inherit" size="large" onClick={() => setShowRules(true)}>
               <HelpOutlineIcon />
             </IconButton>
