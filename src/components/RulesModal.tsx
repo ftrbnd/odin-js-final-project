@@ -48,7 +48,9 @@ const RulesModal: FC<IProps> = ({ open, closeModal }) => {
         <DialogContent>
           <Typography variant="h6">{'Guess the song in 6 tries.'}</Typography>
           <List>
-            <ListItemText>• A random song is selected every day and will have a random starting point.</ListItemText>
+            <ListItemText>
+              • A random song is selected every day and will have a <em>random</em> starting point.
+            </ListItemText>
             <ListItemText>• Every incorrect guess extends the song's playback duration by one second.</ListItemText>
             <ListItemText>• The color of the tiles will change if your guess belongs to the same album.</ListItemText>
           </List>

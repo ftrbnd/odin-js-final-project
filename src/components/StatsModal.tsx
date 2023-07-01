@@ -2,13 +2,14 @@ import { Box, Button, Dialog, DialogContent, DialogTitle, Divider, Slide, Snackb
 import { TransitionProps } from '@mui/material/transitions';
 import { FC, forwardRef, useState } from 'react';
 import ShareIcon from '@mui/icons-material/Share';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useGetUserQuery } from '../features/apiSlice';
 import { auth } from '../utils/firebase';
 import { skipToken } from '@reduxjs/toolkit/dist/query';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import { GUESS_LIMIT, convertShareText } from '../utils/exports';
+import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
 
 interface IProps {
   open: boolean;
@@ -93,7 +94,9 @@ const StatsModal: FC<IProps> = ({ open, closeModal }) => {
           {!auth.currentUser && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <Divider />
-              <Typography variant="body1">
+              <Typography variant="body1" textAlign="center">
+                Stats are not tracked without an account!
+                <br />
                 <NavLink to="/auth" style={{ color: 'inherit' }}>
                   Log in or create an account
                 </NavLink>{' '}
@@ -106,9 +109,16 @@ const StatsModal: FC<IProps> = ({ open, closeModal }) => {
             <Typography variant="body1">
               {auth.currentUser && user?.daily.complete ? user.daily.shareText && convertShareText(user.daily.shareText) : localUser.daily.shareText && convertShareText(localUser.daily.shareText)}
             </Typography>
-            <Button disabled={!user?.daily.complete && !localUser.daily.complete} variant="contained" endIcon={<ShareIcon />} onClick={handleShare}>
-              Share
-            </Button>
+            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <Button variant="outlined" endIcon={<LeaderboardOutlinedIcon />}>
+                <Link to="/leaderboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  Leaderboard
+                </Link>
+              </Button>
+              <Button disabled={!user?.daily.complete && !localUser.daily.complete} variant="contained" endIcon={<ShareIcon />} onClick={handleShare}>
+                Share
+              </Button>
+            </Box>
           </Stack>
         </DialogContent>
         <Snackbar open={openSnackbar} autoHideDuration={2000} onClose={handleClose} message="Copied result!" anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} />
