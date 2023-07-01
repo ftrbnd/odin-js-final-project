@@ -1,7 +1,7 @@
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 import { doc, getDoc, onSnapshot, runTransaction } from 'firebase/firestore';
 import { db } from '../utils/firebase';
-import { CorrectStatus, Song, User, emptyUser } from '../utils/types';
+import { CorrectStatus, Song, User, emptyUser } from '../utils/exports';
 
 interface ShareTextMutationQuery {
   userId: string;

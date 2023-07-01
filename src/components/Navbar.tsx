@@ -73,12 +73,14 @@ const Navbar: FC<IProps> = ({ showRules, setShowRules, showStats, setShowStats }
         </IconButton>
         <p>Statistics</p>
       </MenuItem>
-      <MenuItem>
-        <IconButton aria-label="leaderboard" color="inherit" size="large">
-          <LeaderboardOutlinedIcon />
-        </IconButton>
-        <p>Leaderboard</p>
-      </MenuItem>
+      <Link to="/leaderboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <MenuItem>
+          <IconButton aria-label="leaderboard" color="inherit" size="large">
+            <LeaderboardOutlinedIcon />
+          </IconButton>
+          <p>Leaderboard</p>
+        </MenuItem>
+      </Link>
       <MenuItem
         onClick={() => {
           setShowRules(true);

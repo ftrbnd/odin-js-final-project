@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, db } from '../utils/firebase';
 import { doc, setDoc } from 'firebase/firestore';
-import { emptyUser } from '../utils/types';
+import { emptyUser } from '../utils/exports';
 
 const isValidEmail = (email: string) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
 

@@ -7,7 +7,7 @@ import { TransitionProps } from '@mui/material/transitions';
 import { FC, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import { SongCard } from './ProgressRows';
-import { Song } from '../pages/Game';
+import { Song } from '../utils/exports';
 import { auth } from '../utils/firebase';
 
 interface IProps {

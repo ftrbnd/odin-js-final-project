@@ -10,18 +10,9 @@ import { useGetUserQuery, useUpdateCompleteStatusMutation, useUpdateProgressMuta
 import { useDispatch, useSelector } from 'react-redux';
 import { updateLocalComplete, updateLocalShareText } from '../features/localUserSlice';
 import { skipToken } from '@reduxjs/toolkit/dist/query';
-import { CorrectStatus, GUESS_LIMIT } from '../utils/types';
+import { GUESS_LIMIT, Song } from '../utils/exports';
 import { RootState } from '../app/store';
 import useCountdown from '../utils/useCountdown';
-
-export interface Song {
-  name: string;
-  link: string;
-  cover: string;
-  album?: string;
-  correct?: CorrectStatus;
-  start?: number;
-}
 
 const emptySong: Song = {
   name: 'ㅤ',

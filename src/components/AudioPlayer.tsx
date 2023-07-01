@@ -3,7 +3,7 @@ import { FC, useRef, useState, useEffect } from 'react';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import ReactPlayer from 'react-player/youtube';
-import { GUESS_LIMIT } from '../utils/types';
+import { GUESS_LIMIT } from '../utils/exports';
 import LooksOneIcon from '@mui/icons-material/LooksOne';
 import LooksTwoIcon from '@mui/icons-material/LooksTwo';
 import Looks3Icon from '@mui/icons-material/Looks3';

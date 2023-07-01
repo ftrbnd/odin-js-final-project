@@ -8,7 +8,7 @@ import { auth } from '../utils/firebase';
 import { skipToken } from '@reduxjs/toolkit/dist/query';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
-import { CorrectStatus, GUESS_LIMIT } from '../utils/types';
+import { GUESS_LIMIT, convertShareText } from '../utils/exports';
 
 interface IProps {
   open: boolean;
@@ -58,21 +58,6 @@ const StatsModal: FC<IProps> = ({ open, closeModal }) => {
     }
 
     setOpenSnackbar(false);
-  };
-
-  const convertShareText = (shareText: CorrectStatus[]) => {
-    const squareMap = new Map<CorrectStatus, string>([
-      ['ALBUM', '🟧'],
-      ['CORRECT', '🟩'],
-      ['DEFAULT', '⬜'],
-      ['WRONG', '🟥']
-    ]);
-
-    return shareText
-      .map((status) => {
-        return squareMap.get(status);
-      })
-      .join('');
   };
 
   const handleShare = () => {

@@ -46,3 +46,18 @@ export const emptyUser: User = {
     progress: []
   }
 };
+
+export const convertShareText = (shareText: CorrectStatus[]) => {
+  const squareMap = new Map<CorrectStatus, string>([
+    ['ALBUM', '🟧'],
+    ['CORRECT', '🟩'],
+    ['DEFAULT', '⬜'],
+    ['WRONG', '🟥']
+  ]);
+
+  return shareText
+    .map((status) => {
+      return squareMap.get(status);
+    })
+    .join('');
+};

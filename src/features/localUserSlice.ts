@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { emptyUser, CorrectStatus } from '../utils/types';
+import { emptyUser, CorrectStatus } from '../utils/exports';
 
 export const localUserSlice = createSlice({
   name: 'localUser',
