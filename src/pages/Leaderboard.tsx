@@ -74,7 +74,14 @@ const Leaderboard: FC = () => {
     }
 
     fetchStats().then((stats) => {
-      setDailyScores(stats.dailies.sort((a, b) => a.shareText.indexOf('CORRECT') - b.shareText.indexOf('CORRECT')));
+      setDailyScores(
+        stats.dailies.sort((a, b) => {
+          const aIndex = a.shareText.indexOf('CORRECT');
+          const bIndex = b.shareText.indexOf('CORRECT');
+
+          return (aIndex === -1 ? 7 : aIndex) - (bIndex === -1 ? 7 : bIndex); // if they didn't get the song, 'CORRECT' is not in their shareText, so return any number greater than 6 instead of -1
+        })
+      );
       setWinPercentages(stats.percentages.sort((a, b) => b.percentage - a.percentage));
       setIsLoading(false);
     });
