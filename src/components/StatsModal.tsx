@@ -1,15 +1,16 @@
 import { Box, Button, Dialog, DialogContent, DialogTitle, Divider, Slide, Snackbar, Stack, Typography } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
-import { FC, forwardRef, useState } from 'react';
+import { FC, forwardRef, useState, useEffect } from 'react';
 import ShareIcon from '@mui/icons-material/Share';
 import { Link, NavLink } from 'react-router-dom';
 import { useGetUserQuery } from '../features/apiSlice';
-import { auth } from '../utils/firebase';
+import { auth, db } from '../utils/firebase';
 import { skipToken } from '@reduxjs/toolkit/dist/query';
 import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
-import { GUESS_LIMIT, convertShareText } from '../utils/exports';
+import { convertShareText } from '../utils/exports';
 import LeaderboardOutlinedIcon from '@mui/icons-material/LeaderboardOutlined';
+import { doc, getDoc } from 'firebase/firestore';
 
 interface IProps {
   open: boolean;
@@ -36,7 +37,21 @@ const StatsModal: FC<IProps> = ({ open, closeModal }) => {
   const { data: user, isLoading } = useGetUserQuery(auth.currentUser?.uid ?? skipToken);
   const localUser = useSelector((state: RootState) => state.localUser);
 
+  const [heardleNumber, setHeardleNumber] = useState(0);
+
   const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  useEffect(() => {
+    async function fetchHeardleNumber() {
+      const docRef = doc(db, 'daily_song', 'midnight');
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) return docSnap.data().number;
+      return 0;
+    }
+
+    fetchHeardleNumber().then((num) => setHeardleNumber(num));
+  }, []);
 
   const getStat = (field: string) => {
     if (isLoading || !user) return 0;
@@ -69,7 +84,7 @@ const StatsModal: FC<IProps> = ({ open, closeModal }) => {
       shareable = localUser.daily.shareText;
     }
 
-    navigator.clipboard.writeText(`EDEN Heardle ${shareable.indexOf('CORRECT') + 1 === 0 ? 'X' : shareable.indexOf('CORRECT') + 1}/${GUESS_LIMIT} ${convertShareText(shareable)}`);
+    navigator.clipboard.writeText(`EDEN Heardle #${heardleNumber} ${convertShareText(shareable)}`);
 
     setOpenSnackbar(true);
   };

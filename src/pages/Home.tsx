@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Avatar, Button, Stack, Typography, useTheme } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { auth } from '../utils/firebase';
+import { auth, db } from '../utils/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { resetLocalUser } from '../features/localUserSlice';
@@ -10,10 +10,12 @@ import { useGetUserQuery } from '../features/apiSlice';
 import { skipToken } from '@reduxjs/toolkit/dist/query';
 import edenLogoLight from '../assets/eden-logo-light.png';
 import edenLogoDark from '../assets/eden-logo-dark.png';
+import { doc, getDoc } from 'firebase/firestore';
 
 const Home: FC = () => {
   const [username, setUsername] = useState('');
   const { data: user } = useGetUserQuery(auth.currentUser?.uid ?? skipToken);
+  const [heardleNumber, setHeardleNumber] = useState(0);
 
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -27,6 +29,16 @@ const Home: FC = () => {
         setUsername('');
       }
     });
+
+    async function fetchHeardleNumber() {
+      const docRef = doc(db, 'daily_song', 'midnight');
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) return docSnap.data().number;
+      return 0;
+    }
+
+    fetchHeardleNumber().then((num) => setHeardleNumber(num));
 
     return unsubscribe;
   }, []);
@@ -90,6 +102,9 @@ const Home: FC = () => {
             day: 'numeric',
             year: 'numeric'
           })}
+        </Typography>
+        <Typography variant="subtitle1" align="center">
+          No. {heardleNumber}
         </Typography>
         <Typography variant="subtitle1" align="center">
           Created by giosalad
