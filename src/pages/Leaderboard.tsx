@@ -64,6 +64,8 @@ const Leaderboard: FC = () => {
       querySnapshot.forEach((doc) => {
         if (doc.data().daily.complete) {
           allStats.dailies.push({ username: doc.data().profile.username, shareText: doc.data().daily.shareText });
+        }
+        if (doc.data().statistics.gamesPlayed > 0) {
           allStats.percentages.push({ username: doc.data().profile.username, percentage: Math.round((doc.data().statistics.gamesWon / doc.data().statistics.gamesPlayed || 0) * 100) });
         }
       });
