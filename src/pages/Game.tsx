@@ -201,12 +201,12 @@ const Game: FC = () => {
         {auth.currentUser && user ? <ProgressRows guesses={user?.daily.progress || initialGuessState} limit={GUESS_LIMIT} /> : <ProgressRows guesses={guesses} limit={GUESS_LIMIT} />}
 
         {auth.currentUser && user && user.daily.complete && (
-          <Typography variant="h6">
+          <Typography variant="h6" textAlign="center">
             {user.daily.progress?.at(-1)?.correct === 'CORRECT' ? "Great job on today's puzzle! Check back tomorrow for a new song." : `The song was "${dailySong.name}", try again tomorrow!`}
           </Typography>
         )}
         {localUser && localUser.daily.complete && (
-          <Typography variant="h6">
+          <Typography variant="h6" textAlign="center">
             {localUser.daily.shareText?.at(-1) === 'CORRECT' ? "Great job on today's puzzle! Check back tomorrow for a new song." : `The song was "${dailySong.name}", try again tomorrow!`}
           </Typography>
         )}
