@@ -81,7 +81,7 @@ const RulesModal: FC<IProps> = ({ open, closeModal }) => {
               <Divider />
             </Box>
           )}
-          <Typography variant="body1">A new puzzle is released daily at midnight (Eastern Time). If you haven't already, you can sign up for our daily reminder email.</Typography>
+          <Typography variant="body1">A new puzzle is released daily at midnight (Eastern Time). If you haven't already, you can join our Discord server for reminders.</Typography>
         </DialogContent>
       </Dialog>
     </div>

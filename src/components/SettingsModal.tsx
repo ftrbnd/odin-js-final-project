@@ -47,7 +47,7 @@ const SettingsModal: FC<IProps> = ({ open, closeModal }) => {
               <ListItemText primary="Community" secondary="Discord" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
             </Link>
             <Divider />
-            <Link rel="noopener" target="mynewtab" href="https://discordapp.com/users/201917777185865729" underline="hover" variant="inherit" color="inherit">
+            <Link rel="noopener" target="mynewtab" href="https://twitter.com/finalcali" underline="hover" variant="inherit" color="inherit">
               <ListItemText primary="Questions?" secondary="Direct Message" sx={{ display: 'flex', justifyContent: 'space-between' }} className={styles.listItem} />
             </Link>
             <Divider />
