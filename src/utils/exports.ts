@@ -61,3 +61,10 @@ export const convertShareText = (shareText: CorrectStatus[]) => {
     })
     .join('');
 };
+
+export const emptySong: Song = {
+  name: 'ㅤ',
+  link: '',
+  cover: '',
+  album: ''
+};

@@ -1,9 +1,12 @@
 import { FC } from 'react';
-import { Song } from '../utils/exports';
+import { GUESS_LIMIT, Song, emptySong } from '../utils/exports';
 import { Box, Card, CardMedia, Typography } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import CheckIcon from '@mui/icons-material/Check';
 import { CorrectStatus } from '../utils/exports';
+import { auth } from '../utils/firebase';
+import { useGetUserQuery } from '../features/apiSlice';
+import { skipToken } from '@reduxjs/toolkit/dist/query';
 interface IProps {
   guesses: Song[];
   limit: number;
@@ -56,11 +59,22 @@ export const SongCard: FC<CardProps> = ({ song }) => {
 };
 
 const ProgressRows: FC<IProps> = ({ guesses, limit }) => {
+  const { data: user } = useGetUserQuery(auth.currentUser?.uid ?? skipToken);
+
+  const getRemainingEmptyCards = (length: number) => {
+    const emptySongs: Song[] = [];
+    for (let i = 0; i < length; i++) {
+      emptySongs.push(emptySong);
+    }
+    return emptySongs;
+  };
+
   return (
     <Box sx={{ alignSelf: 'center', padding: '1rem', display: 'grid', gridTemplateRows: `repeat(${limit}, 1fr)`, justifyItems: 'center', alignItems: 'center', gap: '1rem', width: '100%' }}>
       {guesses.map((song, index) => (
         <SongCard key={`${song.name}-${index}`} song={song} />
       ))}
+      {auth.currentUser && user?.daily.progress ? getRemainingEmptyCards(GUESS_LIMIT - user.daily.progress.length).map((card, index) => <SongCard key={`empty-${index}`} song={card} />) : <></>}
     </Box>
   );
 };

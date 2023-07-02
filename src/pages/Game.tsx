@@ -10,16 +10,9 @@ import { useGetUserQuery, useUpdateCompleteStatusMutation, useUpdateProgressMuta
 import { useDispatch, useSelector } from 'react-redux';
 import { updateLocalComplete, updateLocalShareText } from '../features/localUserSlice';
 import { skipToken } from '@reduxjs/toolkit/dist/query';
-import { GUESS_LIMIT, Song } from '../utils/exports';
+import { GUESS_LIMIT, Song, emptySong } from '../utils/exports';
 import { RootState } from '../app/store';
 import useCountdown from '../utils/useCountdown';
-
-const emptySong: Song = {
-  name: 'ㅤ',
-  link: '',
-  cover: '',
-  album: ''
-};
 
 const initialGuessState = [emptySong, emptySong, emptySong, emptySong, emptySong, emptySong];
 
