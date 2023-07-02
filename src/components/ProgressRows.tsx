@@ -70,7 +70,18 @@ const ProgressRows: FC<IProps> = ({ guesses, limit }) => {
   };
 
   return (
-    <Box sx={{ alignSelf: 'center', padding: '1rem', display: 'grid', gridTemplateRows: `repeat(${limit}, 1fr)`, justifyItems: 'center', alignItems: 'center', gap: '1rem' }}>
+    <Box
+      sx={{
+        alignSelf: 'center',
+        padding: '1rem',
+        display: 'grid',
+        gridTemplateRows: `repeat(${limit}, 1fr)`,
+        justifyItems: 'center',
+        alignItems: 'center',
+        gap: '1rem',
+        width: { xs: '100%', sm: '75%', md: '50%', lg: '25%' }
+      }}
+    >
       {guesses.map((song, index) => (
         <SongCard key={`${song.name}-${index}`} song={song} />
       ))}
