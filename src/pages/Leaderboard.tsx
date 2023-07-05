@@ -33,21 +33,25 @@ interface DailyScore {
   shareText: CorrectStatus[];
 }
 
-interface WinPercentage {
+interface NumberStatistic {
   username: string;
-  percentage: number;
+  value: number;
 }
 
 interface AllStats {
   dailies: DailyScore[];
-  percentages: WinPercentage[];
+  percentages: NumberStatistic[];
+  curStreaks: NumberStatistic[];
+  maxStreaks: NumberStatistic[];
 }
 
 const Leaderboard: FC = () => {
   const [dailyScores, setDailyScores] = useState<DailyScore[]>([]);
-  const [winPercentages, setWinPercentages] = useState<WinPercentage[]>([]);
-  const [tabValue, setTabValue] = useState(0);
+  const [winPercentages, setWinPercentages] = useState<NumberStatistic[]>([]);
+  const [currentStreaks, setCurrentStreaks] = useState<NumberStatistic[]>([]);
+  const [maxStreaks, setMaxStreaks] = useState<NumberStatistic[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -57,7 +61,9 @@ const Leaderboard: FC = () => {
     async function fetchStats() {
       const allStats: AllStats = {
         dailies: [],
-        percentages: []
+        percentages: [],
+        curStreaks: [],
+        maxStreaks: []
       };
 
       const querySnapshot = await getDocs(collection(db, 'users'));
@@ -66,7 +72,13 @@ const Leaderboard: FC = () => {
           allStats.dailies.push({ username: doc.data().profile.username, shareText: doc.data().daily.shareText });
         }
         if (doc.data().statistics.gamesPlayed > 0) {
-          allStats.percentages.push({ username: doc.data().profile.username, percentage: Math.round((doc.data().statistics.gamesWon / doc.data().statistics.gamesPlayed || 0) * 100) });
+          allStats.percentages.push({ username: doc.data().profile.username, value: Math.round((doc.data().statistics.gamesWon / doc.data().statistics.gamesPlayed || 0) * 100) });
+        }
+        if (doc.data().statistics.currentStreak > 0) {
+          allStats.curStreaks.push({ username: doc.data().profile.username, value: doc.data().statistics.currentStreak });
+        }
+        if (doc.data().statistics.maxStreak > 0) {
+          allStats.maxStreaks.push({ username: doc.data().profile.username, value: doc.data().statistics.maxStreak });
         }
       });
 
@@ -82,7 +94,10 @@ const Leaderboard: FC = () => {
           return (aIndex === -1 ? 7 : aIndex) - (bIndex === -1 ? 7 : bIndex); // if they didn't get the song, 'CORRECT' is not in their shareText, so return any number greater than 6 instead of -1
         })
       );
-      setWinPercentages(stats.percentages.sort((a, b) => b.percentage - a.percentage));
+      setWinPercentages(stats.percentages.sort((a, b) => b.value - a.value));
+      setCurrentStreaks(stats.curStreaks.sort((a, b) => b.value - a.value));
+      setMaxStreaks(stats.maxStreaks.sort((a, b) => b.value - a.value));
+
       setIsLoading(false);
     });
   }, []);
@@ -104,8 +119,11 @@ const Leaderboard: FC = () => {
           <Tabs value={tabValue} onChange={handleTabChange} aria-label="leaderboard tabs" variant="fullWidth" centered>
             <Tab label="Daily Scores" {...a11yProps(0)} />
             <Tab label="Win Percentages" {...a11yProps(1)} />
+            <Tab label="Current Streaks" {...a11yProps(2)} />
+            <Tab label="Max Streaks" {...a11yProps(3)} />
           </Tabs>
         </Box>
+
         <TabPanel value={tabValue} index={0}>
           <Container>
             {isLoading ? (
@@ -139,7 +157,47 @@ const Leaderboard: FC = () => {
                     {`${index + 1}. ${percentage.username}`}
                   </Typography>
                   <Typography variant="body2" component="span">
-                    {percentage.percentage}
+                    {percentage.value}
+                  </Typography>
+                </Box>
+              ))
+            )}
+          </Container>
+        </TabPanel>
+        <TabPanel value={tabValue} index={2}>
+          <Container>
+            {isLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              currentStreaks.map((streak, index) => (
+                <Box key={`${streak.username}-curStreak`} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="h6" component="span">
+                    {`${index + 1}. ${streak.username}`}
+                  </Typography>
+                  <Typography variant="body2" component="span">
+                    {streak.value}
+                  </Typography>
+                </Box>
+              ))
+            )}
+          </Container>
+        </TabPanel>
+        <TabPanel value={tabValue} index={3}>
+          <Container>
+            {isLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              maxStreaks.map((streak, index) => (
+                <Box key={`${streak.username}-maxStreak`} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="h6" component="span">
+                    {`${index + 1}. ${streak.username}`}
+                  </Typography>
+                  <Typography variant="body2" component="span">
+                    {streak.value}
                   </Typography>
                 </Box>
               ))
