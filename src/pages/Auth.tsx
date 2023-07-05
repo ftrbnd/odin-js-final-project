@@ -1,16 +1,18 @@
 import { FC, useEffect, useState } from 'react';
-import { Paper, Switch, Box, Typography, AppBar, Toolbar, Divider, Button, Stack } from '@mui/material';
+import { Paper, Switch, Box, Typography, AppBar, Toolbar, Divider, Button, Stack, CircularProgress, Alert } from '@mui/material';
 import SignUp from '../components/SignUp';
 import LogIn from '../components/LogIn';
 import { Link, useNavigate } from 'react-router-dom';
 import GoogleIcon from '@mui/icons-material/Google';
 import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { auth } from '../utils/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { auth, googleProvider } from '../utils/firebase';
+import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
 
 const Auth: FC = () => {
   const [checked, setChecked] = useState(false);
+  const [formValid, setFormValid] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -32,8 +34,30 @@ const Auth: FC = () => {
     console.log('TODO: Signing in with Discord...');
   };
 
-  const signInWithGoogle = () => {
+  const signInWithGoogle = async () => {
     console.log('TODO: Signing in with Google...');
+    try {
+      setIsLoading(true);
+      await signInWithPopup(auth, googleProvider);
+
+      setFormValid('');
+      if (auth.currentUser) console.log(`Successfully signed in user #${auth?.currentUser.uid} via Google`);
+      navigate('/');
+    } catch (e: any) {
+      setIsLoading(false);
+      console.error(e);
+
+      switch (e.code) {
+        case 'auth/popup-blocked':
+          setFormValid('Pop-up was blocked, try again.');
+          break;
+        case 'auth/popup-closed-by-user':
+          setFormValid('Pop-up was closed.');
+          break;
+        default:
+          setFormValid(e.code);
+      }
+    }
   };
 
   return (
@@ -57,6 +81,12 @@ const Auth: FC = () => {
           <Switch checked={checked} onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />
           {checked ? <SignUp /> : <LogIn />}
 
+          {formValid && (
+            <Stack sx={{ width: '100%', paddingTop: '10px' }} spacing={2}>
+              <Alert severity="error">{formValid}</Alert>
+            </Stack>
+          )}
+
           <div style={{ marginTop: '10px', width: '100%' }}>
             <Divider>or</Divider>
           </div>
@@ -68,7 +98,7 @@ const Auth: FC = () => {
           </div>
 
           <div style={{ marginTop: '10px', width: '100%' }}>
-            <Button variant="outlined" fullWidth startIcon={<GoogleIcon />} onClick={signInWithGoogle}>
+            <Button variant="outlined" fullWidth startIcon={isLoading ? <CircularProgress color="inherit" size={24} /> : <GoogleIcon />} onClick={signInWithGoogle} disabled={isLoading}>
               Continue with Google
             </Button>
           </div>
