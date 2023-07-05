@@ -1,5 +1,5 @@
 import { FC, KeyboardEvent, MouseEvent, useState } from 'react';
-import { TextField, InputAdornment, FormControl, InputLabel, IconButton, Button, Alert, Stack, OutlinedInput } from '@mui/material';
+import { TextField, InputAdornment, FormControl, InputLabel, IconButton, Button, Alert, Stack, OutlinedInput, CircularProgress } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LoginIcon from '@mui/icons-material/Login';
@@ -22,6 +22,7 @@ const SignUp: FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [formValid, setFormValid] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -79,15 +80,18 @@ const SignUp: FC = () => {
       return;
     }
 
+    setIsLoading(true);
     const usersRef = collection(db, 'users');
     const q = query(usersRef, where('profile.username', '==', usernameInput));
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
+      setIsLoading(false);
       setFormValid('Username already exists.');
       return;
     }
 
     try {
+      setIsLoading(true);
       await createUserWithEmailAndPassword(auth, emailInput, passwordInput);
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, {
@@ -108,6 +112,7 @@ const SignUp: FC = () => {
         state: 'SIGN_UP'
       });
     } catch (e: any) {
+      setIsLoading(false);
       console.error(e);
 
       switch (e.code) {
@@ -178,8 +183,8 @@ const SignUp: FC = () => {
       </FormControl>
 
       <div style={{ marginTop: '10px' }}>
-        <Button variant="contained" fullWidth startIcon={<LoginIcon />} onClick={handleSubmit}>
-          Sign Up
+        <Button variant="contained" fullWidth startIcon={isLoading ? <CircularProgress color="inherit" size={24} /> : <LoginIcon />} onClick={handleSubmit} disabled={isLoading}>
+          {isLoading ? 'Signing up...' : 'Sign Up'}
         </Button>
       </div>
 

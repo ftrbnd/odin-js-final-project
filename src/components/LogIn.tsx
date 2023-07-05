@@ -1,5 +1,5 @@
 import { FC, KeyboardEvent, MouseEvent, useState } from 'react';
-import { TextField, InputAdornment, FormControl, InputLabel, IconButton, Button, Alert, Stack, OutlinedInput } from '@mui/material';
+import { TextField, InputAdornment, FormControl, InputLabel, IconButton, Button, Alert, Stack, OutlinedInput, CircularProgress } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LoginIcon from '@mui/icons-material/Login';
@@ -18,6 +18,7 @@ const LogIn: FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [formValid, setFormValid] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -62,12 +63,14 @@ const LogIn: FC = () => {
     }
 
     try {
+      setIsLoading(true);
       await signInWithEmailAndPassword(auth, emailInput, passwordInput);
       setFormValid('');
       navigate('/play', {
         state: 'LOG_IN'
       });
     } catch (e: any) {
+      setIsLoading(false);
       console.error(e);
 
       switch (e.code) {
@@ -76,6 +79,9 @@ const LogIn: FC = () => {
           break;
         case 'auth/user-not-found':
           setFormValid('User does not exist.');
+          break;
+        case 'auth/too-many-requests':
+          setFormValid('Too many log-in attempts. Try again later.');
           break;
         default:
           setFormValid(e.code);
@@ -126,8 +132,8 @@ const LogIn: FC = () => {
       </FormControl>
 
       <div style={{ marginTop: '10px' }}>
-        <Button variant="contained" fullWidth startIcon={<LoginIcon />} onClick={handleSubmit}>
-          Log In
+        <Button variant="contained" fullWidth startIcon={isLoading ? <CircularProgress color="inherit" size={24} /> : <LoginIcon />} onClick={handleSubmit} disabled={isLoading}>
+          {isLoading ? 'Logging in...' : 'Log In'}
         </Button>
       </div>
 
