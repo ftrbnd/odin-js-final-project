@@ -62,7 +62,7 @@ const Home: FC = () => {
 
   return (
     <Stack justifyContent="center" alignItems="center" height="100vh" spacing={3} padding="2rem">
-      <Stack direction="row" alignItems="center" gap="1rem">
+      <Stack sx={{ flexDirection: { xs: 'column', sm: 'row' } }} alignItems="center" gap="1rem">
         <Avatar alt="eden logo" src={theme.palette.mode === 'dark' ? edenLogoDark : edenLogoLight} />
         <Typography variant={!auth.currentUser ? 'h3' : 'h4'} align="center" fontWeight="bold">
           EDEN Heardle
