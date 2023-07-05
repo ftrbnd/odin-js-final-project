@@ -1,4 +1,4 @@
-import { FC, MouseEvent, useState } from 'react';
+import { FC, KeyboardEvent, MouseEvent, useState } from 'react';
 import { TextField, InputAdornment, FormControl, InputLabel, IconButton, Button, Alert, Stack, OutlinedInput } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -55,6 +55,12 @@ const SignUp: FC = () => {
     }
 
     setPasswordError(false);
+  };
+
+  const handleEnter = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
   };
 
   const handleSubmit = async () => {
@@ -160,6 +166,7 @@ const SignUp: FC = () => {
           onChange={(event) => {
             setPasswordInput(event.target.value);
           }}
+          onKeyDown={(e) => handleEnter(e)}
           endAdornment={
             <InputAdornment position="end">
               <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end">
