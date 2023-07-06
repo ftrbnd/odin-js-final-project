@@ -69,8 +69,6 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link }
   };
 
   const handlePlay = () => {
-    console.log('onPlay');
-
     setPlayerReady(true);
   };
 
@@ -98,12 +96,11 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link }
   };
 
   const handleSeek = () => {
-    console.log('onSeek');
     setPlayerReady(true);
   };
 
   const handleError = () => {
-    console.log('onError');
+    console.error('Failed to play media...');
   };
 
   const handleBuffer = () => {
@@ -113,7 +110,7 @@ const AudioPlayer: FC<IProps> = ({ start, currentDuration, totalDuration, link }
   };
 
   const handleBufferEnd = () => {
-    console.log('Buffering ended.');
+    console.log('Buffering ended');
 
     setPlayerReady(true);
   };
