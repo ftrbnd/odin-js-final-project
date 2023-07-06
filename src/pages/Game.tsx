@@ -15,6 +15,8 @@ import { RootState } from '../app/store';
 import useCountdown from '../utils/useCountdown';
 
 const initialGuessState = [emptySong, emptySong, emptySong, emptySong, emptySong, emptySong];
+const dashToSlashRegex = /--/g; // for vertigo songs; ex. start//end stored in database as start--end
+const slashToDashRegex = /\/\//g; // for when users select the song, change slashes back to dashes
 
 const Game: FC = () => {
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
@@ -75,9 +77,8 @@ const Game: FC = () => {
 
       const querySnapshot = await getDocs(collection(db, 'songs'));
       querySnapshot.forEach((doc) => {
-        const regex = /--/g; // for vertigo songs; ex. start//end stored in database as start--end
         songs.push({
-          name: doc.id.replace(regex, '//'),
+          name: doc.id.replace(dashToSlashRegex, '//'),
           link: doc.data().link,
           cover: doc.data().cover,
           album: doc.data().album || ''
@@ -142,7 +143,7 @@ const Game: FC = () => {
 
     setGuessCount((prevCount) => prevCount + 1);
 
-    if (song.name === dailySong.name) {
+    if (song.name.replace(slashToDashRegex, '--') === dailySong.name) {
       song.correct = 'CORRECT'; // sets song's card to check icon
       setGuessCount(GUESS_LIMIT); // disable more autocomplete selections
 
