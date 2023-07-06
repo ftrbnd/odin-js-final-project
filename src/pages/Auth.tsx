@@ -30,12 +30,12 @@ const Auth: FC = () => {
     setChecked(e.target.checked);
   };
 
-  const signInWithDiscord = () => {
-    console.log('TODO: Signing in with Discord...');
-  };
+  // const signInWithDiscord = () => {
+  //   console.log('Signing in with Discord...');
+  // };
 
   const signInWithGoogle = async () => {
-    console.log('TODO: Signing in with Google...');
+    console.log('Signing in with Google...');
     try {
       setIsLoading(true);
       await signInWithPopup(auth, googleProvider);
