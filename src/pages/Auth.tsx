@@ -87,7 +87,7 @@ const Auth: FC = () => {
             </Stack>
           )}
 
-          <div style={{ marginTop: '10px', width: '100%' }}>
+          <div style={{ width: '100%' }}>
             <Divider>or</Divider>
           </div>
 
