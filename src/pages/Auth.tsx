@@ -4,8 +4,8 @@ import SignUp from '../components/SignUp';
 import LogIn from '../components/LogIn';
 import { Link, useNavigate } from 'react-router-dom';
 import GoogleIcon from '@mui/icons-material/Google';
-import { faDiscord } from '@fortawesome/free-brands-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faDiscord } from '@fortawesome/free-brands-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { auth, googleProvider } from '../utils/firebase';
 import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
 
@@ -91,11 +91,11 @@ const Auth: FC = () => {
             <Divider>or</Divider>
           </div>
 
-          <div style={{ marginTop: '10px', width: '100%' }}>
+          {/* <div style={{ marginTop: '10px', width: '100%' }}>
             <Button variant="outlined" fullWidth startIcon={<FontAwesomeIcon icon={faDiscord} />} onClick={signInWithDiscord}>
               Continue with Discord
             </Button>
-          </div>
+          </div> */}
 
           <div style={{ marginTop: '10px', width: '100%' }}>
             <Button variant="outlined" fullWidth startIcon={isLoading ? <CircularProgress color="inherit" size={24} /> : <GoogleIcon />} onClick={signInWithGoogle} disabled={isLoading}>
