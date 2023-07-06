@@ -4,7 +4,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LoginIcon from '@mui/icons-material/Login';
 import { useNavigate } from 'react-router-dom';
-import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { fetchSignInMethodsForEmail, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 
 const isValidEmail = (email: string) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
@@ -92,6 +92,13 @@ const LogIn: FC = () => {
     if (passwordError || !passwordInput) {
       setAlertSeverity('error');
       setFormValid('Password must be 5-20 characters long.');
+      return;
+    }
+
+    const signInMethods = await fetchSignInMethodsForEmail(auth, emailInput);
+    if (signInMethods.includes('google.com')) {
+      setAlertSeverity('error');
+      setFormValid('Please log in with Google!');
       return;
     }
 
