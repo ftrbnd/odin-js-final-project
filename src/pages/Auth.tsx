@@ -41,7 +41,6 @@ const Auth: FC = () => {
       await signInWithPopup(auth, googleProvider);
 
       setFormValid('');
-      if (auth.currentUser) console.log(`Successfully signed in user #${auth?.currentUser.uid} via Google`);
       navigate('/');
     } catch (e: any) {
       setIsLoading(false);
