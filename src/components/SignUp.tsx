@@ -86,7 +86,7 @@ const SignUp: FC = () => {
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
       setIsLoading(false);
-      setFormValid('Username already exists.');
+      setFormValid('Username already exists!');
       return;
     }
 
