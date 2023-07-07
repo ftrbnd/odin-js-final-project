@@ -7,7 +7,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 // import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { auth, db, googleProvider } from '../utils/firebase';
-import { onAuthStateChanged, signInWithPopup, updateProfile } from 'firebase/auth';
+import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { emptyUser } from '../utils/exports';
 
