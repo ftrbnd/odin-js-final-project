@@ -93,6 +93,7 @@ const SignUp: FC = () => {
     try {
       setIsLoading(true);
       await createUserWithEmailAndPassword(auth, emailInput, passwordInput);
+
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, {
           displayName: usernameInput

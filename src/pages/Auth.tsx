@@ -6,8 +6,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import GoogleIcon from '@mui/icons-material/Google';
 // import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { auth, googleProvider } from '../utils/firebase';
-import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
+import { auth, db, googleProvider } from '../utils/firebase';
+import { onAuthStateChanged, signInWithPopup, updateProfile } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { emptyUser } from '../utils/exports';
 
 const Auth: FC = () => {
   const [checked, setChecked] = useState(false);
@@ -35,13 +37,29 @@ const Auth: FC = () => {
   // };
 
   const signInWithGoogle = async () => {
-    console.log('Signing in with Google...');
     try {
       setIsLoading(true);
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+
+      const userRef = doc(db, 'users', result.user.uid);
+      const userSnap = await getDoc(userRef);
+
+      const userAlreadyRegistered = userSnap.exists();
+
+      if (!userAlreadyRegistered) {
+        await setDoc(doc(db, 'users', result.user.uid), {
+          ...emptyUser,
+          profile: {
+            username: result.user.displayName,
+            avatar: result.user.photoURL
+          }
+        });
+      }
 
       setFormValid('');
-      navigate('/');
+      navigate('/play', {
+        state: userAlreadyRegistered ? 'GOOGLE_RETURNING_USER' : 'GOOGLE_FIRST_TIME_USER'
+      });
     } catch (e: any) {
       setIsLoading(false);
       console.error(e);

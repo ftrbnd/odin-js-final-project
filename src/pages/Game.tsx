@@ -47,6 +47,7 @@ const Game: FC = () => {
 
   const [showRules, setShowRules] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     // on mount: fetch daily song and song options
@@ -101,6 +102,7 @@ const Game: FC = () => {
   useEffect(() => {
     switch (location.state) {
       case 'LOG_IN':
+      case 'GOOGLE_RETURNING_USER':
         setShowSnackbar(true);
         setSnackbarMessage(`Welcome back ${auth.currentUser?.displayName}!`);
         navigate(location.pathname, { replace: true });
@@ -112,6 +114,11 @@ const Game: FC = () => {
         break;
       case 'SHOW_RULES':
         setShowRules(true);
+        navigate(location.pathname, { replace: true });
+        break;
+      case 'GOOGLE_FIRST_TIME_USER':
+        // show settings to change username
+        setShowSettings(true);
         navigate(location.pathname, { replace: true });
         break;
     }
@@ -191,7 +198,7 @@ const Game: FC = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100vh' }}>
-      <Navbar showRules={showRules} setShowRules={setShowRules} showStats={showStats} setShowStats={setShowStats} />
+      <Navbar showRules={showRules} setShowRules={setShowRules} showStats={showStats} setShowStats={setShowStats} showSettings={showSettings} setShowSettings={setShowSettings} />
       <Snackbar open={showSnackbar} autoHideDuration={3000} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         <Alert severity="success" onClose={handleSnackbarClose} variant="filled">
           {snackbarMessage}

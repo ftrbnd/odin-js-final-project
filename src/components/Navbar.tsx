@@ -21,14 +21,15 @@ interface IProps {
   setShowRules: React.Dispatch<React.SetStateAction<boolean>>;
   showStats: boolean;
   setShowStats: React.Dispatch<React.SetStateAction<boolean>>;
+  showSettings: boolean;
+  setShowSettings: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Navbar: FC<IProps> = ({ showRules, setShowRules, showStats, setShowStats }) => {
+const Navbar: FC<IProps> = ({ showRules, setShowRules, showStats, setShowStats, showSettings, setShowSettings }) => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
 
   const [showDrawer, setShowDrawer] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
 
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
